@@ -1,0 +1,23 @@
+<project name="zip_data_files" default="zip_data_files" basedir=".">
+
+    <description>
+        Apache Ant script to create a data zip files for GitHub.
+        The unzipped data files are git-ignored due to their size.
+        Chris Joakim, Microsoft
+        Use: ant -f zip_data_files.xml
+    </description>
+
+    <target name="zip_data_files" >
+
+        <delete file="python_libs.zip" quiet="true"/>
+
+        <zip destfile="python_libs.zip"
+             includes="python_libs.json"
+             basedir="."
+             update="true" />
+
+        <echo message="done." />
+
+    </target>
+
+</project>
