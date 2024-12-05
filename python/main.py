@@ -6,10 +6,9 @@ Usage:
     python main.py test_cosmos_service <dbname> <cname> <optional-flags>
     python main.py test_cosmos_service graph test1
     python main.py test_cosmos_service graph test1 --bulk-load
-    python main.py load_libraries <dbname> <cname> <max_docs>
-    python main.py load_libraries caig libraries 999999
-
-    python main.py ad_hoc dev
+    python main.py load_python_libraries_graph <dbname> <cname> <max_docs>
+    python main.py load_python_libraries_graph graph graph 999999
+    python main.py load_python_libraries_graph graph graph 999999 --bulk-load
 Options:
   -h --help     Show this screen.
   --version     Show version.
@@ -82,8 +81,6 @@ async def test_cosmos_service(dbname, cname):
         print("obj: {}".format(obj))
         doc = await nosql_svc.upsert_item(obj)
         print("upsert_item doc: {}".format(doc))
-        # print("last_response_headers: {}".format(nosql_svc.last_response_headers()))
-        # print("last_request_charge: {}".format(nosql_svc.last_request_charge()))
 
         doc = await nosql_svc.point_read(doc["id"], doc["pk"])
         print("point_read doc: {}".format(doc))
@@ -116,16 +113,10 @@ async def test_cosmos_service(dbname, cname):
                 print("batch result {}: {}".format(idx, result))
 
         results = await nosql_svc.query_items(
-            "select * from c where c.doctype = 'sample'", True
+            "select * from c where c.doctype = 'person'", True
         )
         for idx, result in enumerate(results):
             print("select * query result {}: {}".format(idx, result))
-
-        results = await nosql_svc.query_items(
-            "select * from c where c.name = 'Sean Cooper'", True
-        )
-        for idx, result in enumerate(results):
-            print("cooper query result {}: {}".format(idx, result))
 
         results = await nosql_svc.query_items(
             "select * from c where c.pk = 'bulk_pk'", False
@@ -150,15 +141,6 @@ async def test_cosmos_service(dbname, cname):
                 nosql_svc.last_response_headers()["x-ms-item-count"]
             )
         )
-
-        sql_parameters = [dict(name="@pk", value="bulk_pk")]
-
-        results = await nosql_svc.parameterized_query(
-            "select * from c where c.pk = @pk", sql_parameters, True
-        )
-        for idx, result in enumerate(results):
-            print("parameterized query result {}: {}".format(idx, result))
-
     except Exception as e:
         logging.info(str(e))
         logging.info(traceback.format_exc())
@@ -166,32 +148,9 @@ async def test_cosmos_service(dbname, cname):
     logging.info("end of test_cosmos_service")
 
 
-async def load_entities(dbname, cname):
-    logging.info("load_entities, dbname: {}, cname: {}".format(dbname, cname))
-    try:
-        opts = dict()
-        nosql_svc = CosmosNoSQLService(opts)
-        await nosql_svc.initialize()
-        nosql_svc.set_db(dbname)
-        nosql_svc.set_container(cname)
-        doc = FS.read_json("../data/entities/entities_doc.json")
-        print(doc)
-        resp = await nosql_svc.upsert_item(doc)
-        print(resp)
-
-        # impl/app/src/services/entities_service.py
-        # impl/app/tests/test_entities_service.py
-        # impl/data/entities/entities_doc.json
-
-    except Exception as e:
-        logging.info(str(e))
-        logging.info(traceback.format_exc())
-    await nosql_svc.close()
-
-
-async def load_libraries(dbname, cname, max_docs):
+async def load_python_libraries_graph(dbname, cname, max_docs):
     logging.info(
-        "load_libraries, dbname: {}, cname: {}, max_docs: {}".format(
+        "load_python_libraries_graph, dbname: {}, cname: {}, max_docs: {}".format(
             dbname, cname, max_docs
         )
     )
@@ -201,62 +160,77 @@ async def load_libraries(dbname, cname, max_docs):
         await nosql_svc.initialize()
         nosql_svc.set_db(dbname)
         nosql_svc.set_container(cname)
-        await load_docs_from_directory(
-            nosql_svc, "../data/pypi/wrangled_libs", max_docs
-        )
+        doc_dict = FS.read_json("..\data\python_libs.json")
+        partition_key_values = assign_partition_keys(doc_dict)
+        print("partition_keys: {} {}".format(
+            len(partition_key_values), partition_key_values))
+
+        for pk_value in partition_key_values:
+            pk_docs = select_docs_in_pk(doc_dict, pk_value)
+            print("pk_value: {}, docs: {}".format(pk_value, len(pk_docs)))
+            await batch_load_docs(nosql_svc, pk_docs)
+
     except Exception as e:
         logging.info(str(e))
         logging.info(traceback.format_exc())
     await nosql_svc.close()
 
+def assign_partition_keys(doc_dict):
+    """
+    To make this dataset realistic, use a fairly wide set of 
+    partition key values.  Use the first letter of the library name
+    as the partition key value, and set it to the 'pk' attribute
+    of each of the given documents. 
 
-async def load_docs_from_directory(nosql_svc, wrangled_libs_dir, max_docs):
-    files_list = FS.list_files_in_dir(wrangled_libs_dir)
-    filtered_files_list = filter_files_list(files_list, ".json")
-    max_idx = len(filtered_files_list) - 1
+    Update the given docs in the doc_dict in place, and return
+    as list of the pk values for use in the bulk loading process.
+    """
+    doc_names = list(doc_dict.keys())
+    partition_keys = dict()
+    for doc_name in doc_names:
+        doc = doc_dict[doc_name]
+        pk = doc_name.strip()[0].lower()
+        doc["pk"] = pk
+        partition_keys[pk] = 1
+    return sorted(partition_keys.keys())
+
+def select_docs_in_pk(doc_dict, pk_value):
+    selected = list()
+    doc_names = list(doc_dict.keys())
+    for doc_name in doc_names:
+        doc = doc_dict[doc_name]
+        if doc["pk"] == pk_value:
+            selected.append(doc)
+    return selected
+
+async def batch_load_docs(nosql_svc, docs):
     batch_number, batch_size, batch_operations = 0, 10, list()
     load_counter = Counter()
-    pk = "pypi"  # libtype is 'pypi'; dataset easily fits into one physical partition
 
-    for idx, filename in enumerate(filtered_files_list):
-        if filename.endswith(".json"):
-            if idx < max_docs:
-                fq_name = "{}/{}".format(wrangled_libs_dir, filename)
-                try:
-                    logging.info(
-                        "reading file {} of {}: {}".format(idx, max_idx, fq_name)
-                    )
-                    doc = FS.read_json(fq_name)
-                    load_counter.increment("document_files_read")
-                    doc["_id"] = (
-                        "{}_{}".format(doc["libtype"].strip(), doc["name"].strip())
-                        .replace("-", "_")
-                        .lower()
-                    )
-                    doc["pk"] = pk
-
-                    op = ("upsert", (doc,))  # create, upsert
-                    batch_operations.append(op)
-                    if len(batch_operations) >= batch_size:
-                        batch_number = batch_number + 1
-                        await load_batch(
-                            nosql_svc, load_counter, batch_number, batch_operations, pk
-                        )
-                        batch_operations = list()
-                except Exception as e:
-                    logging.info("error processing {}: {}".format(fq_name, str(e)))
-                    logging.info(traceback.format_exc())
-                    return
+    for idx, doc_name in enumerate(doc_names):
+        try:
+            doc = doc_dict[doc_name]
+            op = ("upsert", (doc,))
+            batch_operations.append(op)
+            if len(batch_operations) >= batch_size:
+                batch_number = batch_number + 1
+                await load_batch(
+                    nosql_svc, load_counter, batch_number, batch_operations, pk
+                )
+                batch_operations = list()
+        except Exception as e:
+            logging.info("error processing {}: {}".format(fq_name, str(e)))
+            logging.info(traceback.format_exc())
+            return
 
     if len(batch_operations) > 0:
         batch_number = batch_number + 1
         await load_batch(nosql_svc, load_counter, batch_number, batch_operations, pk)
 
     logging.info(
-        "load_docs_from_directory completed; results: {}".format(
+        "load_docs_from_file completed; results: {}".format(
             json.dumps(load_counter.get_data())
         )
-        # load_docs_from_directory completed; results: {"document_files_read": 10855, "201": 10761, "200": 94}
     )
 
 
@@ -279,14 +253,7 @@ async def load_batch(nosql_svc, load_counter, batch_number, batch_operations, pk
     time.sleep(1.0)
 
 
-def filter_files_list(files_list, suffix):
-    filtered = list()
-    for f in files_list:
-        if f.endswith(suffix):
-            filtered.append(f)
-    return filtered
-
-def create_random_person_document(pk=""):
+def create_random_person_document(pk="") -> dict:
     """
     Create and return a dict representing a person document.
     The partition key is expected to be /pk in the Cosmos DB container.
@@ -323,11 +290,11 @@ if __name__ == "__main__":
             elif func == "test_cosmos_service":
                 dbname, cname = sys.argv[2], sys.argv[3]
                 asyncio.run(test_cosmos_service(dbname, cname))
-            elif func == "load_libraries":
+            elif func == "load_python_libraries_graph":
                 dbname = sys.argv[2]
                 cname = sys.argv[3]
                 max_docs = int(sys.argv[4])
-                asyncio.run(load_libraries(dbname, cname, max_docs))
+                asyncio.run(load_python_libraries_graph(dbname, cname, max_docs))
             else:
                 print_options("Error: invalid function: {}".format(func))
         except Exception as e:
