@@ -1,0 +1,6 @@
+COSMOSDB_NOSQL_AUTH_MECHANISM="key"
+COSMOSDB_NOSQL_URI="https://<your-acct-name>.documents.azure.com:443/"
+COSMOSDB_NOSQL_KEY="<your-acct-key>"
+COSMOSDB_NOSQL_DB="graph"
+COSMOSDB_NOSQL_CONTAINER="graph"
+LOG_LEVEL="info"

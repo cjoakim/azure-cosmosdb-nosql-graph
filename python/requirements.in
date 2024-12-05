@@ -1,0 +1,13 @@
+# Python requirements file for this application.
+# The libraries will be downloaded from PyPI: https://pypi.org
+# when the venv.ps1 or venv.sh script is executed.
+# Chris Joakim, Microsoft
+
+Faker
+Jinja2
+aiohttp
+azure-cosmos
+azure-identity
+black
+docopt
+python-dotenv
