@@ -14,9 +14,6 @@ Options:
   --version     Show version.
 """
 
-# See https://learn.microsoft.com/en-us/azure/postgresql/single-server/connect-python
-
-
 import asyncio
 import json
 import sys
@@ -168,7 +165,7 @@ async def load_python_libraries_graph(dbname, cname, max_docs):
         for pk_value in partition_key_values:
             pk_docs = select_docs_in_pk(doc_dict, pk_value)
             print("pk_value: {}, docs: {}".format(pk_value, len(pk_docs)))
-            await batch_load_docs(nosql_svc, pk_docs)
+            await batch_load_docs(nosql_svc, pk_docs, pk_value)
 
     except Exception as e:
         logging.info(str(e))
@@ -203,54 +200,50 @@ def select_docs_in_pk(doc_dict, pk_value):
             selected.append(doc)
     return selected
 
-async def batch_load_docs(nosql_svc, docs):
+async def batch_load_docs(nosql_svc, pk_docs, pk_value):
     batch_number, batch_size, batch_operations = 0, 10, list()
-    load_counter = Counter()
+    print("batch_load_docs, pk_value: {}, docs: {}".format(
+        pk_value, len(pk_docs)))
 
-    for idx, doc_name in enumerate(doc_names):
+    # batch load cosmos db in batches of 10 documents
+    for doc in pk_docs:
         try:
-            doc = doc_dict[doc_name]
             op = ("upsert", (doc,))
             batch_operations.append(op)
             if len(batch_operations) >= batch_size:
                 batch_number = batch_number + 1
                 await load_batch(
-                    nosql_svc, load_counter, batch_number, batch_operations, pk
+                    nosql_svc, batch_number, batch_operations, pk_value
                 )
                 batch_operations = list()
         except Exception as e:
-            logging.info("error processing {}: {}".format(fq_name, str(e)))
             logging.info(traceback.format_exc())
             return
 
+    # load the last batch of documents, if any
     if len(batch_operations) > 0:
         batch_number = batch_number + 1
-        await load_batch(nosql_svc, load_counter, batch_number, batch_operations, pk)
+        await load_batch(nosql_svc, batch_number, batch_operations, pk_value)
 
-    logging.info(
-        "load_docs_from_file completed; results: {}".format(
-            json.dumps(load_counter.get_data())
+
+async def load_batch(nosql_svc, batch_number, batch_operations, pk):
+    counter = Counter()
+    # the --bulk-load flag enables testing/debugging this logic 
+    # without actually loading the data into Cosmos DB
+    if ConfigService.boolean_arg("--bulk-load") == True:
+        results = await nosql_svc.execute_item_batch(batch_operations, pk)
+        for result in results:
+            try:
+                status_code = str(result["statusCode"])
+                counter.increment(status_code)
+            except:
+                counter.increment("exceptions")
+        logging.info(
+            "load_batch {} in pk {} with {} documents - results: {}".format(
+                batch_number, pk, len(batch_operations), json.dumps(counter.get_data())
+            )
         )
-    )
-
-
-async def load_batch(nosql_svc, load_counter, batch_number, batch_operations, pk):
-    batch_counter = Counter()
-    results = await nosql_svc.execute_item_batch(batch_operations, pk)
-    for result in results:
-        try:
-            status_code = str(result["statusCode"])
-            batch_counter.increment(status_code)
-        except:
-            batch_counter.increment("exceptions")
-    load_counter.merge(batch_counter)
-    logging.info(
-        "load_batch {} with {} documents, results: {}".format(
-            batch_number, len(batch_operations), json.dumps(batch_counter.get_data())
-        )
-    )
-    logging.info("current totals: {}".format(json.dumps(load_counter.get_data())))
-    time.sleep(1.0)
+    await asyncio.sleep(0.1)
 
 
 def create_random_person_document(pk="") -> dict:
