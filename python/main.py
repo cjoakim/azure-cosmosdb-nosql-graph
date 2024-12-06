@@ -4,11 +4,18 @@ to this demonstration of the Cosmos DB NoSQL API.
 Usage:
     python main.py print_defined_environment_variables
     python main.py test_cosmos_service <dbname> <cname> <optional-flags>
-    python main.py test_cosmos_service graph test1
-    python main.py test_cosmos_service graph test1 --bulk-load
+    python main.py test_cosmos_service graph test
+    python main.py test_cosmos_service graph test --bulk-load
     python main.py load_python_libraries_graph <dbname> <cname> <max_docs>
-    python main.py load_python_libraries_graph graph graph 999999
     python main.py load_python_libraries_graph graph graph 999999 --bulk-load
+    python main.py count_documents <dbname> <cname>
+    python main.py point_read <dbname> <cname> <doc_id> <pk>
+    python main.py point_read graph graph flask f
+    python main.py query <dbname> <cname>
+    python main.py query graph graph
+    python main.py traverse_dependencies <dbname> <cname> <libname> <depth>
+    python main.py traverse_dependencies graph graph flask 1
+    python main.py traverse_dependencies graph graph flask 3
 Options:
   -h --help     Show this screen.
   --version     Show version.
@@ -157,10 +164,13 @@ async def load_python_libraries_graph(dbname, cname, max_docs):
         await nosql_svc.initialize()
         nosql_svc.set_db(dbname)
         nosql_svc.set_container(cname)
-        doc_dict = FS.read_json("..\data\python_libs.json")
-        partition_key_values = assign_partition_keys(doc_dict)
-        print("partition_keys: {} {}".format(
-            len(partition_key_values), partition_key_values))
+        doc_dict = FS.read_json("../data/python_libs.json")
+        partition_key_values = collect_partition_key_values(doc_dict)
+        print(
+            "partition_keys: {} {}".format(
+                len(partition_key_values), partition_key_values
+            )
+        )
 
         for pk_value in partition_key_values:
             pk_docs = select_docs_in_pk(doc_dict, pk_value)
@@ -172,24 +182,20 @@ async def load_python_libraries_graph(dbname, cname, max_docs):
         logging.info(traceback.format_exc())
     await nosql_svc.close()
 
-def assign_partition_keys(doc_dict):
-    """
-    To make this dataset realistic, use a fairly wide set of 
-    partition key values.  Use the first letter of the library name
-    as the partition key value, and set it to the 'pk' attribute
-    of each of the given documents. 
 
-    Update the given docs in the doc_dict in place, and return
-    as list of the pk values for use in the bulk loading process.
+def collect_partition_key_values(doc_dict) -> list:
+    """
+    Iterate the set of documents to be loaded into Cosmos DB.
+    Collect their unique set of partition key values and
+    return them as a sorted list.
     """
     doc_names = list(doc_dict.keys())
     partition_keys = dict()
     for doc_name in doc_names:
-        doc = doc_dict[doc_name]
-        pk = doc_name.strip()[0].lower()
-        doc["pk"] = pk
+        pk = doc_dict[doc_name]["pk"]
         partition_keys[pk] = 1
     return sorted(partition_keys.keys())
+
 
 def select_docs_in_pk(doc_dict, pk_value):
     selected = list()
@@ -200,10 +206,10 @@ def select_docs_in_pk(doc_dict, pk_value):
             selected.append(doc)
     return selected
 
+
 async def batch_load_docs(nosql_svc, pk_docs, pk_value):
     batch_number, batch_size, batch_operations = 0, 10, list()
-    print("batch_load_docs, pk_value: {}, docs: {}".format(
-        pk_value, len(pk_docs)))
+    print("batch_load_docs, pk_value: {}, docs: {}".format(pk_value, len(pk_docs)))
 
     # batch load cosmos db in batches of 10 documents
     for doc in pk_docs:
@@ -212,9 +218,7 @@ async def batch_load_docs(nosql_svc, pk_docs, pk_value):
             batch_operations.append(op)
             if len(batch_operations) >= batch_size:
                 batch_number = batch_number + 1
-                await load_batch(
-                    nosql_svc, batch_number, batch_operations, pk_value
-                )
+                await load_batch(nosql_svc, batch_number, batch_operations, pk_value)
                 batch_operations = list()
         except Exception as e:
             logging.info(traceback.format_exc())
@@ -228,7 +232,7 @@ async def batch_load_docs(nosql_svc, pk_docs, pk_value):
 
 async def load_batch(nosql_svc, batch_number, batch_operations, pk):
     counter = Counter()
-    # the --bulk-load flag enables testing/debugging this logic 
+    # the --bulk-load flag enables testing/debugging this logic
     # without actually loading the data into Cosmos DB
     if ConfigService.boolean_arg("--bulk-load") == True:
         results = await nosql_svc.execute_item_batch(batch_operations, pk)
@@ -273,7 +277,7 @@ if __name__ == "__main__":
     load_dotenv(override=True)  # load environment variable overrides from the .env file
     logging.basicConfig(format="%(asctime)s - %(message)s", level=logging.INFO)
     if len(sys.argv) < 2:
-        print_options("Error: invalid command-line")
+        print_options("")
         exit(1)
     else:
         try:
@@ -289,7 +293,7 @@ if __name__ == "__main__":
                 max_docs = int(sys.argv[4])
                 asyncio.run(load_python_libraries_graph(dbname, cname, max_docs))
             else:
-                print_options("Error: invalid function: {}".format(func))
+                print_options("".format(func))
         except Exception as e:
             logging.info(str(e))
             logging.info(traceback.format_exc())
