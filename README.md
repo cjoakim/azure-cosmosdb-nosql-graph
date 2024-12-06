@@ -2,8 +2,8 @@
 
 A demonstration of how to use the **Cosmos DB NoSQL API for Graph Workoads**.
 
-The code implementation in this repo is in **Python**, but the concepts
-are language-neutral.
+The code implementation in this repo is in **Python** but the 
+concepts and design are language-neutral.
 
 ## Graph Workload Best Practices with the Cosmos DB NoSQL API
 
