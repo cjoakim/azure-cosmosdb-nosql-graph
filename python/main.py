@@ -8,11 +8,10 @@ Usage:
     python main.py test_cosmos_service graph test --bulk-load
     python main.py load_python_libraries_graph <dbname> <cname> <max_docs>
     python main.py load_python_libraries_graph graph graph 999999 --bulk-load
-    python main.py count_documents <dbname> <cname>
     python main.py point_read <dbname> <cname> <doc_id> <pk>
     python main.py point_read graph graph flask f
-    python main.py query <dbname> <cname>
-    python main.py query graph graph
+    python main.py query <dbname> <cname> <query_name>
+    python main.py query graph graph count_documents
     python main.py traverse_dependencies <dbname> <cname> <libname> <depth>
     python main.py traverse_dependencies graph graph flask 1
     python main.py traverse_dependencies graph graph flask 3
@@ -273,6 +272,61 @@ def create_random_person_document(pk="") -> dict:
     }
 
 
+async def point_read(dbname, cname, doc_id, doc_pk):
+    nosql_svc = None
+    try:
+        print("point_read, dbname: {}, cname: {}, doc_id: {}, doc_pk: {}".format(
+            dbname, cname, doc_id, doc_pk))
+        opts = dict()
+        nosql_svc = CosmosNoSQLService(opts)
+        await nosql_svc.initialize()
+        nosql_svc.set_db(dbname)
+        nosql_svc.set_container(cname)
+        doc = await nosql_svc.point_read(doc_id, doc_pk)
+        print("document: {}".format(json.dumps(doc, indent=2)))
+        print("request unit charge: {}".format(nosql_svc.last_request_charge()))
+    except Exception as e:
+        logging.info(str(e))
+        logging.info(traceback.format_exc())
+
+    if nosql_svc is not None:
+        await nosql_svc.close()
+
+
+async def query(dbname, cname, query_name):
+    nosql_svc = None
+    try:
+        opts = dict()
+        nosql_svc = CosmosNoSQLService(opts)
+        await nosql_svc.initialize()
+        nosql_svc.set_db(dbname)
+        nosql_svc.set_container(cname)
+        await asyncio.sleep(0.1)
+    except Exception as e:
+        logging.info(str(e))
+        logging.info(traceback.format_exc())
+
+    if nosql_svc is not None:
+        await nosql_svc.close()
+
+
+async def traverse_dependencies(dbname, cname, libname, depth):
+    nosql_svc = None
+    try:
+        opts = dict()
+        nosql_svc = CosmosNoSQLService(opts)
+        await nosql_svc.initialize()
+        nosql_svc.set_db(dbname)
+        nosql_svc.set_container(cname)
+        await asyncio.sleep(0.1)
+    except Exception as e:
+        logging.info(str(e))
+        logging.info(traceback.format_exc())
+
+    if nosql_svc is not None:
+        await nosql_svc.close()
+
+
 if __name__ == "__main__":
     load_dotenv(override=True)  # load environment variable overrides from the .env file
     logging.basicConfig(format="%(asctime)s - %(message)s", level=logging.INFO)
@@ -292,6 +346,23 @@ if __name__ == "__main__":
                 cname = sys.argv[3]
                 max_docs = int(sys.argv[4])
                 asyncio.run(load_python_libraries_graph(dbname, cname, max_docs))
+            elif func == "point_read":
+                dbname = sys.argv[2]
+                cname = sys.argv[3]
+                doc_id = sys.argv[4]
+                doc_pk = sys.argv[5]
+                asyncio.run(point_read(dbname, cname, doc_id, doc_pk))
+            elif func == "query":
+                dbname = sys.argv[2]
+                cname = sys.argv[3]
+                query_name = sys.argv[4]
+                asyncio.run(query(dbname, cname, query_name))
+            elif func == "traverse_dependencies":
+                dbname = sys.argv[2]
+                cname = sys.argv[3]
+                libname = sys.argv[4]
+                depth = int(sys.argv[4])
+                asyncio.run(traverse_dependencies(dbname, cname, libname, depth))
             else:
                 print_options("".format(func))
         except Exception as e:
