@@ -329,4 +329,4 @@ Run the following command from the python\ directory:
 Finally, now that the data is loaded into your Cosmos DB container,
 we can query and traverse it with the following examples.
 
-
+**TODO - Work in progress Friday 12/6**
