@@ -12,6 +12,7 @@ Usage:
     python main.py point_read graph graph flask f
     python main.py query <dbname> <cname> <query_name>
     python main.py query graph graph count_documents
+    python main.py query graph graph docs_in_pk_2
     python main.py traverse_dependencies <dbname> <cname> <libname> <depth>
     python main.py traverse_dependencies graph graph flask 1
     python main.py traverse_dependencies graph graph flask 3
@@ -301,7 +302,23 @@ async def query(dbname, cname, query_name):
         await nosql_svc.initialize()
         nosql_svc.set_db(dbname)
         nosql_svc.set_container(cname)
-        await asyncio.sleep(0.1)
+
+        if query_name == "count_documents":
+            sql = "select value count(1) from c"
+            print("SQL: {}".format(sql))
+            results = await nosql_svc.query_items(sql, False)
+            for idx, result in enumerate(results):
+                print("count_documents result: {}".format(result))
+            print("request unit charge: {}".format(nosql_svc.last_request_charge()))
+        elif query_name == "docs_in_pk_2":
+            sql = "select * from c where c.pk = '2'"
+            print("SQL: {}".format(sql))
+            results = await nosql_svc.query_items(sql, False)
+            for idx, doc in enumerate(results):
+                print("doc {}: {}".format(idx, json.dumps(doc, indent=2)))
+            print("request unit charge: {}".format(nosql_svc.last_request_charge()))
+        else:
+            print("query_name '{}' is not recognized".format(query_name))
     except Exception as e:
         logging.info(str(e))
         logging.info(traceback.format_exc())
