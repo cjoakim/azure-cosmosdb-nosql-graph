@@ -34,6 +34,7 @@ from dotenv import load_dotenv
 
 from faker import Faker
 
+from src.dao.dependency_graph import DependencyGraph
 from src.services.config_service import ConfigService
 from src.services.cosmos_nosql_service import CosmosNoSQLService
 from src.util.counter import Counter
@@ -335,7 +336,10 @@ async def traverse_dependencies(dbname, cname, libname, depth):
         await nosql_svc.initialize()
         nosql_svc.set_db(dbname)
         nosql_svc.set_container(cname)
-        await asyncio.sleep(0.1)
+        dg = DependencyGraph(nosql_svc)
+        results = await dg.traverse_dependencies(libname, depth)
+        print("traverse_dependencies results: {}".format(
+            json.dumps(results, indent=2)))
     except Exception as e:
         logging.info(str(e))
         logging.info(traceback.format_exc())
@@ -378,7 +382,7 @@ if __name__ == "__main__":
                 dbname = sys.argv[2]
                 cname = sys.argv[3]
                 libname = sys.argv[4]
-                depth = int(sys.argv[4])
+                depth = int(sys.argv[5])
                 asyncio.run(traverse_dependencies(dbname, cname, libname, depth))
             else:
                 print_options("".format(func))

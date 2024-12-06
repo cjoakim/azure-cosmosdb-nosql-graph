@@ -3,6 +3,8 @@
 # using the "aggregation pipeline" pattern.
 # Chris Joakim, Microsoft
 
+import asyncio
+
 from src.services.config_service import ConfigService
 from src.services.cosmos_nosql_service import CosmosNoSQLService
 from src.util.counter import Counter
@@ -11,7 +13,7 @@ from src.util.fs import FS
 
 class DependencyGraph:
 
-    def __init__(self, nosql_svc: CosmosNoSQLService, ):
+    def __init__(self, nosql_svc: CosmosNoSQLService):
         """
         Constructor method.  The given nosql_svc is an instance
         of CosmosNoSQLService that is already pointing at your
@@ -20,7 +22,7 @@ class DependencyGraph:
         self.nosql_svc = nosql_svc
 
 
-    def traverse(self, root_library: str, depth: int) -> dict:
+    async def traverse_dependencies(self, root_library: str, depth: int) -> dict:
         """
         Traverse the graph starting from the given root library
         to the given depth (a positive integer).
@@ -30,5 +32,7 @@ class DependencyGraph:
         self.root_library = root_library
         self.depth = depth
         self.collected_libs = dict()
+
+        await asyncio.sleep(0.1)
 
         return self.collected_libs
