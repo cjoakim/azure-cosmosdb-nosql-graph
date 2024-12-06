@@ -110,7 +110,6 @@ class ConfigService:
         )
         return d
 
-
     @classmethod
     def log_defined_env_vars(cls):
         """Log the defined  environment variables as JSON"""
@@ -143,7 +142,6 @@ class ConfigService:
     def cosmosdb_nosql_uri(cls) -> str:
         return cls.envvar("COSMOSDB_NOSQL_URI", None)
 
-
     @classmethod
     def cosmosdb_nosql_auth_mechanism(cls) -> str:
         return cls.envvar("COSMOSDB_NOSQL_AUTH_MECHANISM", "key").lower()
@@ -159,8 +157,6 @@ class ConfigService:
     @classmethod
     def cosmosdb_nosql_container(cls) -> str:
         return cls.envvar("COSMOSDB_NOSQL_CONTAINER", None)
-
-
 
     @classmethod
     def epoch(cls) -> float:

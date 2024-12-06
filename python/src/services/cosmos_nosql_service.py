@@ -10,14 +10,11 @@ from src.services.config_service import ConfigService
 
 # Instances of this class are used to access a Cosmos DB NoSQL
 # account/database using the asynchronous SDK methods.
-# This module uses the 'azure-cosmos' SDK on PyPi.org, currently version 4.7.0.
-# See https://pypi.org/project/azure-cosmos/
-# See https://learn.microsoft.com/en-us/python/api/overview/azure/cosmos-readme?view=azure-python
 # Chris Joakim, Microsoft
 
 # azure_logger can be used to set the verbosity of the Azure and Cosmos SDK logging
 azure_logger = logging.getLogger("azure")
-azure_logger.setLevel(logging.WARNING)
+azure_logger.setLevel(logging.FATAL)
 
 
 LAST_REQUEST_CHARGE_HEADER = "x-ms-request-charge"
@@ -45,7 +42,7 @@ class CosmosNoSQLService:
             key = ConfigService.cosmosdb_nosql_key()
             logging.error("CosmosNoSQLService#uri: {}".format(uri))
             # logging.error("CosmosNoSQLService#key: {}".format(key))
-            self._client = CosmosClient(uri, key)
+            self._client = CosmosClient(uri, key, logging_enable=True)
             logging.info("CosmosNoSQLService - initialize() with key completed")
         else:
             logging.info("CosmosNoSQLService#initialize with DefaultAzureCredential")
@@ -90,7 +87,7 @@ class CosmosNoSQLService:
 
     def current_ctrproxy(self):
         return self._ctrproxy
-    
+
     async def list_containers(self):
         """Return the list of container names in the current database."""
         container_list = list()

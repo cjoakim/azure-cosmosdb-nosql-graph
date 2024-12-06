@@ -1,0 +1,64 @@
+{
+  "root_library_name": "pydantic",
+  "depth": 10,
+  "start_time": 1733508344.226333,
+  "elapsed_time": 1.2031142711639404,
+  "collected_libs": {
+    "pydantic": {
+      "doctype": "library",
+      "name": "pydantic",
+      "id": "pydantic",
+      "pk": "p",
+      "dependencies": [
+        {
+          "id": "annotated_types",
+          "pk": "a",
+          "doctype": "library"
+        },
+        {
+          "id": "email_validator",
+          "pk": "e",
+          "doctype": "library"
+        },
+        {
+          "id": "importlib_metadata",
+          "pk": "i",
+          "doctype": "library"
+        },
+        {
+          "id": "pydantic_core",
+          "pk": "p",
+          "doctype": "library"
+        },
+        {
+          "id": "typing_extensions",
+          "pk": "t",
+          "doctype": "library"
+        }
+      ],
+      "package_url": "https://pypi.org/project/pydantic/",
+      "summary": "data validation using python type hints",
+      "kwds": "pydanticrecursiveref pyd pydantic_v1 pydantic __get_pydantic_core_schema__",
+      "version": "2.5.3",
+      "release_count": 128,
+      "developers": [
+        "1755071+adriangb@users.noreply.github.com",
+        "david@pydantic.dev",
+        "em.jolibois@gmail.com",
+        "hasan.r67@gmail.com",
+        "lig@countzero.co",
+        "mail@davidhewitt.io",
+        "marcelotryle@gmail.com",
+        "s@muelcolvin.com",
+        "sydneymarierunkle@gmail.com",
+        "terry@pydantic.dev"
+      ],
+      "_rid": "YuM7AMfcPP6MGgAAAAAAAA==",
+      "_self": "dbs/YuM7AA==/colls/YuM7AMfcPP4=/docs/YuM7AMfcPP6MGgAAAAAAAA==/",
+      "_etag": "\"4c01c16f-0000-0300-0000-6752fa870000\"",
+      "_attachments": "attachments/",
+      "_ts": 1733491335,
+      "__traversal_depth": 0
+    }
+  }
+}

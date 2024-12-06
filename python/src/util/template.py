@@ -1,4 +1,3 @@
-
 # This class are used to generate text content using jinja2 templates.
 # Chris Joakim, Microsoft
 

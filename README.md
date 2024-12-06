@@ -324,9 +324,221 @@ Run the following command from the python\ directory:
 > python main.py load_python_libraries_graph graph graph 999999 --bulk-load
 ```
 
+---
+
 ### Execute Queries and Traversals
 
 Finally, now that the data is loaded into your Cosmos DB container,
 we can query and traverse it with the following examples.
 
-**TODO - Work in progress Friday 12/6**
+#### Count Documents
+
+```
+(venv) PS ...\python> python main.py query graph graph count_documents
+
+2024-12-06 12:59:41,225 - CosmosNoSQLService - constructor
+2024-12-06 12:59:41,226 - CosmosNoSQLService#auth_mechanism: key
+2024-12-06 12:59:41,226 - CosmosNoSQLService#initialize with key
+2024-12-06 12:59:41,226 - CosmosNoSQLService#uri: https://gbbcj.documents.azure.com:443/
+2024-12-06 12:59:41,350 - CosmosNoSQLService - initialize() with key completed
+SQL: select value count(1) from c
+count_documents result: 10761
+request unit charge: 2.89
+2024-12-06 12:59:42,509 - CosmosNoSQLService - client closed
+```
+
+#### Point-Read
+
+```
+(venv) PS ...\python> python main.py point_read graph graph flask f
+
+point_read, dbname: graph, cname: graph, doc_id: flask, doc_pk: f
+2024-12-06 12:58:07,766 - CosmosNoSQLService - constructor
+2024-12-06 12:58:07,766 - CosmosNoSQLService#auth_mechanism: key
+2024-12-06 12:58:07,766 - CosmosNoSQLService#initialize with key
+2024-12-06 12:58:07,766 - CosmosNoSQLService#uri: https://gbbcj.documents.azure.com:443/
+2024-12-06 12:58:07,888 - CosmosNoSQLService - initialize() with key completed
+document: {
+  "doctype": "library",
+  "name": "flask",
+  "id": "flask",
+  "pk": "f",
+  "dependencies": [
+    {
+      "id": "asgiref",
+      "pk": "a",
+      "doctype": "library"
+    },
+    {
+      "id": "blinker",
+      "pk": "b",
+      "doctype": "library"
+    },
+    {
+      "id": "click",
+      "pk": "c",
+      "doctype": "library"
+    },
+    {
+      "id": "importlib_metadata",
+      "pk": "i",
+      "doctype": "library"
+    },
+    {
+      "id": "itsdangerous",
+      "pk": "i",
+      "doctype": "library"
+    },
+    {
+      "id": "jinja2",
+      "pk": "j",
+      "doctype": "library"
+    },
+    {
+      "id": "python_dotenv",
+      "pk": "p",
+      "doctype": "library"
+    },
+    {
+      "id": "werkzeug",
+      "pk": "w",
+      "doctype": "library"
+    }
+  ],
+  "package_url": "https://pypi.org/project/Flask/",
+  "summary": "a simple framework for building complex web applications.",
+  "kwds": "flask wsgi _wsgi python pip",
+  "version": "3.0.0",
+  "release_count": 57,
+  "developers": [
+    "contact@palletsprojects.com"
+  ],
+  "_rid": "YuM7AMfcPP7hDAAAAAAAAA==",
+  "_self": "dbs/YuM7AA==/colls/YuM7AMfcPP4=/docs/YuM7AMfcPP7hDAAAAAAAAA==/",
+  "_etag": "\"4c01985f-0000-0300-0000-6752fa400000\"",
+  "_attachments": "attachments/",
+  "_ts": 1733491264
+}
+request unit charge: 1.0
+2024-12-06 12:58:08,382 - CosmosNoSQLService - client closed
+```
+
+#### Query documents in partition key 2
+
+```
+(venv) PS ...\python> python main.py query graph graph docs_in_pk_2
+2024-12-06 13:01:19,825 - CosmosNoSQLService - constructor
+2024-12-06 13:01:19,825 - CosmosNoSQLService#auth_mechanism: key
+2024-12-06 13:01:19,826 - CosmosNoSQLService#initialize with key
+2024-12-06 13:01:19,826 - CosmosNoSQLService#uri: https://gbbcj.documents.azure.com:443/
+2024-12-06 13:01:19,952 - CosmosNoSQLService - initialize() with key completed
+SQL: select * from c where c.pk = '2'
+doc 0: {
+  "doctype": "library",
+  "name": "2captcha-python",
+  "id": "2captcha-python",
+  "pk": "2",
+  "dependencies": [
+    {
+      "id": "requests",
+      "pk": "r",
+      "doctype": "library"
+    }
+  ],
+  "package_url": "https://pypi.org/project/2captcha-python/",
+  "summary": "python module for easy integration with 2captcha api",
+  "kwds": "recaptcha recaptchatimeout captchasolver captcha_id hcaptcha",
+  "version": "1.2.2",
+  "release_count": 11,
+  "developers": [
+    "2captcha",
+    "info@2captcha.com"
+  ],
+  "_rid": "YuM7AMfcPP4BAAAAAAAAAA==",
+  "_self": "dbs/YuM7AA==/colls/YuM7AMfcPP4=/docs/YuM7AMfcPP4BAAAAAAAAAA==/",
+  "_etag": "\"4c019050-0000-0300-0000-6752f9fd0000\"",
+  "_attachments": "attachments/",
+  "_ts": 1733491197
+}
+doc 1: {
+  "doctype": "library",
+  "name": "2to3",
+  "id": "2to3",
+  "pk": "2",
+  "dependencies": [],
+  "package_url": "https://pypi.org/project/2to3/",
+  "summary": "adds the 2to3 command directly to entry_points.",
+  "kwds": "2to3  adds the 2to3 command directly to entry_points.",
+  "version": "1.0",
+  "release_count": 1,
+  "developers": [
+    "xoviat",
+    "xoviat@gmail.com"
+  ],
+  "_rid": "YuM7AMfcPP4CAAAAAAAAAA==",
+  "_self": "dbs/YuM7AA==/colls/YuM7AMfcPP4=/docs/YuM7AMfcPP4CAAAAAAAAAA==/",
+  "_etag": "\"4c019150-0000-0300-0000-6752f9fd0000\"",
+  "_attachments": "attachments/",
+  "_ts": 1733491197
+}
+request unit charge: 2.85
+2024-12-06 13:01:20,385 - CosmosNoSQLService - client closed
+```
+
+#### Traversing the graph for the Flask libraries, at a depth of 0 to 4
+
+See the traversals/flask_<depth>.json files for actual traversal results.
+
+**Note: This test was executed from a non-Azure host; 500 Mbps on a home network.  Results will be much faster from Azure compute in the same region as Cosmos DB.**
+
+```
+(venv) PS ...\python> python main.py traverse_dependencies graph graph flask 0
+2024-12-06 12:49:05,714 - CosmosNoSQLService - constructor
+2024-12-06 12:49:05,715 - CosmosNoSQLService#auth_mechanism: key
+2024-12-06 12:49:05,715 - CosmosNoSQLService#initialize with key
+2024-12-06 12:49:05,715 - CosmosNoSQLService#uri: https://gbbcj.documents.azure.com:443/
+2024-12-06 12:49:05,840 - CosmosNoSQLService - initialize() with key completed
+traverse_dependencies, seconds 1.1192774772644043, docs: 1
+2024-12-06 12:49:07,039 - file written: traversals/flask_0.json
+2024-12-06 12:49:07,040 - CosmosNoSQLService - client closed
+
+(venv) PS ...\python> python main.py traverse_dependencies graph graph flask 1
+2024-12-06 12:49:11,316 - CosmosNoSQLService - constructor
+2024-12-06 12:49:11,316 - CosmosNoSQLService#auth_mechanism: key
+2024-12-06 12:49:11,317 - CosmosNoSQLService#initialize with key
+2024-12-06 12:49:11,317 - CosmosNoSQLService#uri: https://gbbcj.documents.azure.com:443/
+2024-12-06 12:49:11,440 - CosmosNoSQLService - initialize() with key completed
+traverse_dependencies, seconds 1.8546595573425293, docs: 7
+2024-12-06 12:49:13,365 - file written: traversals/flask_1.json
+2024-12-06 12:49:13,366 - CosmosNoSQLService - client closed
+
+(venv) PS ...\python> python main.py traverse_dependencies graph graph flask 2
+2024-12-06 12:49:16,866 - CosmosNoSQLService - constructor
+2024-12-06 12:49:16,866 - CosmosNoSQLService#auth_mechanism: key
+2024-12-06 12:49:16,867 - CosmosNoSQLService#initialize with key
+2024-12-06 12:49:16,867 - CosmosNoSQLService#uri: https://gbbcj.documents.azure.com:443/
+2024-12-06 12:49:16,993 - CosmosNoSQLService - initialize() with key completed
+traverse_dependencies, seconds 2.6800620555877686, docs: 13
+2024-12-06 12:49:19,755 - file written: traversals/flask_2.json
+2024-12-06 12:49:19,756 - CosmosNoSQLService - client closed
+
+(venv) PS ...\python> python main.py traverse_dependencies graph graph flask 3
+2024-12-06 12:49:23,829 - CosmosNoSQLService - constructor
+2024-12-06 12:49:23,829 - CosmosNoSQLService#auth_mechanism: key
+2024-12-06 12:49:23,829 - CosmosNoSQLService#initialize with key
+2024-12-06 12:49:23,829 - CosmosNoSQLService#uri: https://gbbcj.documents.azure.com:443/
+2024-12-06 12:49:23,968 - CosmosNoSQLService - initialize() with key completed
+traverse_dependencies, seconds 4.827138900756836, docs: 33
+2024-12-06 12:49:28,867 - file written: traversals/flask_3.json
+2024-12-06 12:49:28,868 - CosmosNoSQLService - client closed
+
+(venv) PS ...\python> python main.py traverse_dependencies graph graph flask 4
+2024-12-06 12:49:32,798 - CosmosNoSQLService - constructor
+2024-12-06 12:49:32,798 - CosmosNoSQLService#auth_mechanism: key
+2024-12-06 12:49:32,798 - CosmosNoSQLService#initialize with key
+2024-12-06 12:49:32,798 - CosmosNoSQLService#uri: https://gbbcj.documents.azure.com:443/
+2024-12-06 12:49:32,917 - CosmosNoSQLService - initialize() with key completed
+traverse_dependencies, seconds 10.928367137908936, docs: 82
+2024-12-06 12:49:43,919 - file written: traversals/flask_4.json
+2024-12-06 12:49:43,919 - CosmosNoSQLService - client closed
+```

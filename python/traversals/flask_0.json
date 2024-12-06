@@ -1,0 +1,70 @@
+{
+  "root_library_name": "flask",
+  "depth": 0,
+  "start_time": 1733507345.919104,
+  "elapsed_time": 1.1192774772644043,
+  "collected_libs": {
+    "flask": {
+      "doctype": "library",
+      "name": "flask",
+      "id": "flask",
+      "pk": "f",
+      "dependencies": [
+        {
+          "id": "asgiref",
+          "pk": "a",
+          "doctype": "library"
+        },
+        {
+          "id": "blinker",
+          "pk": "b",
+          "doctype": "library"
+        },
+        {
+          "id": "click",
+          "pk": "c",
+          "doctype": "library"
+        },
+        {
+          "id": "importlib_metadata",
+          "pk": "i",
+          "doctype": "library"
+        },
+        {
+          "id": "itsdangerous",
+          "pk": "i",
+          "doctype": "library"
+        },
+        {
+          "id": "jinja2",
+          "pk": "j",
+          "doctype": "library"
+        },
+        {
+          "id": "python_dotenv",
+          "pk": "p",
+          "doctype": "library"
+        },
+        {
+          "id": "werkzeug",
+          "pk": "w",
+          "doctype": "library"
+        }
+      ],
+      "package_url": "https://pypi.org/project/Flask/",
+      "summary": "a simple framework for building complex web applications.",
+      "kwds": "flask wsgi _wsgi python pip",
+      "version": "3.0.0",
+      "release_count": 57,
+      "developers": [
+        "contact@palletsprojects.com"
+      ],
+      "_rid": "YuM7AMfcPP7hDAAAAAAAAA==",
+      "_self": "dbs/YuM7AA==/colls/YuM7AMfcPP4=/docs/YuM7AMfcPP7hDAAAAAAAAA==/",
+      "_etag": "\"4c01985f-0000-0300-0000-6752fa400000\"",
+      "_attachments": "attachments/",
+      "_ts": 1733491264,
+      "__traversal_depth": 0
+    }
+  }
+}

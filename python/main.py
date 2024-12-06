@@ -277,8 +277,11 @@ def create_random_person_document(pk="") -> dict:
 async def point_read(dbname, cname, doc_id, doc_pk):
     nosql_svc = None
     try:
-        print("point_read, dbname: {}, cname: {}, doc_id: {}, doc_pk: {}".format(
-            dbname, cname, doc_id, doc_pk))
+        print(
+            "point_read, dbname: {}, cname: {}, doc_id: {}, doc_pk: {}".format(
+                dbname, cname, doc_id, doc_pk
+            )
+        )
         opts = dict()
         nosql_svc = CosmosNoSQLService(opts)
         await nosql_svc.initialize()
@@ -336,11 +339,23 @@ async def traverse_dependencies(dbname, cname, libname, depth):
         await nosql_svc.initialize()
         nosql_svc.set_db(dbname)
         nosql_svc.set_container(cname)
-        dg = DependencyGraph(nosql_svc)
+
+        # The known_libs dictionary is a performance optimization
+        # since the python ecosystem has hundreds of thousands of
+        # libraries while the sample dataset only has ~10k libraries.
+        # This can result in many non-found cases when traversing
+        # the graph.
+        doc_dict = FS.read_json("../data/python_libs.json")
+        known_libs = doc_dict.keys()
+        dg = DependencyGraph(nosql_svc, known_libs)
+
         results = await dg.traverse_dependencies(libname, depth)
-        print("traverse_dependencies, seconds {}, docs: {}".format(
-            results["elapsed_time"], len(results["collected_libs"])))
-        outfile = "tmp/{}_{}.json".format(libname, depth)
+        print(
+            "traverse_dependencies, seconds {}, docs: {}".format(
+                results["elapsed_time"], len(results["collected_libs"])
+            )
+        )
+        outfile = "traversals/{}_{}.json".format(libname, depth)
         FS.write_json(results, outfile)
     except Exception as e:
         logging.info(str(e))

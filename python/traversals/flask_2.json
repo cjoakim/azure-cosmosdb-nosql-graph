@@ -1,0 +1,535 @@
+{
+  "root_library_name": "flask",
+  "depth": 2,
+  "start_time": 1733507357.064826,
+  "elapsed_time": 2.6800620555877686,
+  "collected_libs": {
+    "flask": {
+      "doctype": "library",
+      "name": "flask",
+      "id": "flask",
+      "pk": "f",
+      "dependencies": [
+        {
+          "id": "asgiref",
+          "pk": "a",
+          "doctype": "library"
+        },
+        {
+          "id": "blinker",
+          "pk": "b",
+          "doctype": "library"
+        },
+        {
+          "id": "click",
+          "pk": "c",
+          "doctype": "library"
+        },
+        {
+          "id": "importlib_metadata",
+          "pk": "i",
+          "doctype": "library"
+        },
+        {
+          "id": "itsdangerous",
+          "pk": "i",
+          "doctype": "library"
+        },
+        {
+          "id": "jinja2",
+          "pk": "j",
+          "doctype": "library"
+        },
+        {
+          "id": "python_dotenv",
+          "pk": "p",
+          "doctype": "library"
+        },
+        {
+          "id": "werkzeug",
+          "pk": "w",
+          "doctype": "library"
+        }
+      ],
+      "package_url": "https://pypi.org/project/Flask/",
+      "summary": "a simple framework for building complex web applications.",
+      "kwds": "flask wsgi _wsgi python pip",
+      "version": "3.0.0",
+      "release_count": 57,
+      "developers": [
+        "contact@palletsprojects.com"
+      ],
+      "_rid": "YuM7AMfcPP7hDAAAAAAAAA==",
+      "_self": "dbs/YuM7AA==/colls/YuM7AMfcPP4=/docs/YuM7AMfcPP7hDAAAAAAAAA==/",
+      "_etag": "\"4c01985f-0000-0300-0000-6752fa400000\"",
+      "_attachments": "attachments/",
+      "_ts": 1733491264,
+      "__traversal_depth": 0
+    },
+    "asgiref": {
+      "doctype": "library",
+      "name": "asgiref",
+      "id": "asgiref",
+      "pk": "a",
+      "dependencies": [
+        {
+          "id": "mypy",
+          "pk": "m",
+          "doctype": "library"
+        },
+        {
+          "id": "pytest",
+          "pk": "p",
+          "doctype": "library"
+        },
+        {
+          "id": "pytest_asyncio",
+          "pk": "p",
+          "doctype": "library"
+        },
+        {
+          "id": "typing_extensions",
+          "pk": "t",
+          "doctype": "library"
+        }
+      ],
+      "package_url": "https://pypi.org/project/asgiref/",
+      "summary": "asgi specs, helper code, and adapters",
+      "kwds": "wsgi_application asgi_application wsgi asgi django",
+      "version": "3.7.2",
+      "release_count": 62,
+      "developers": [
+        "django_software_foundation",
+        "foundation@djangoproject.com"
+      ],
+      "_rid": "YuM7AMfcPP7LAQAAAAAAAA==",
+      "_self": "dbs/YuM7AA==/colls/YuM7AMfcPP4=/docs/YuM7AMfcPP7LAQAAAAAAAA==/",
+      "_etag": "\"4c01c352-0000-0300-0000-6752fa070000\"",
+      "_attachments": "attachments/",
+      "_ts": 1733491207,
+      "__traversal_depth": 1
+    },
+    "blinker": {
+      "doctype": "library",
+      "name": "blinker",
+      "id": "blinker",
+      "pk": "b",
+      "dependencies": [],
+      "package_url": "https://pypi.org/project/blinker/",
+      "summary": "fast, simple object-to-object and broadcast signaling",
+      "kwds": "blinker pycon round_two signals pypi",
+      "version": "1.7.0",
+      "release_count": 13,
+      "developers": [
+        "contact@palletsprojects.com",
+        "jek@discorporate.us"
+      ],
+      "_rid": "YuM7AMfcPP7pBAAAAAAAAA==",
+      "_self": "dbs/YuM7AA==/colls/YuM7AMfcPP4=/docs/YuM7AMfcPP7pBAAAAAAAAA==/",
+      "_etag": "\"4c016056-0000-0300-0000-6752fa170000\"",
+      "_attachments": "attachments/",
+      "_ts": 1733491223,
+      "__traversal_depth": 1
+    },
+    "click": {
+      "doctype": "library",
+      "name": "click",
+      "id": "click",
+      "pk": "c",
+      "dependencies": [
+        {
+          "id": "colorama",
+          "pk": "c",
+          "doctype": "library"
+        },
+        {
+          "id": "importlib_metadata",
+          "pk": "i",
+          "doctype": "library"
+        }
+      ],
+      "package_url": "https://pypi.org/project/click/",
+      "summary": "composable command line interface toolkit",
+      "kwds": "commands command pip cli _pip",
+      "version": "8.1.7",
+      "release_count": 53,
+      "developers": [
+        "contact@palletsprojects.com",
+        "pallets"
+      ],
+      "_rid": "YuM7AMfcPP40BgAAAAAAAA==",
+      "_self": "dbs/YuM7AA==/colls/YuM7AMfcPP4=/docs/YuM7AMfcPP40BgAAAAAAAA==/",
+      "_etag": "\"4c01bf57-0000-0300-0000-6752fa1d0000\"",
+      "_attachments": "attachments/",
+      "_ts": 1733491229,
+      "__traversal_depth": 1
+    },
+    "itsdangerous": {
+      "doctype": "library",
+      "name": "itsdangerous",
+      "id": "itsdangerous",
+      "pk": "i",
+      "dependencies": [],
+      "package_url": "https://pypi.org/project/itsdangerous/",
+      "summary": "safely pass data to untrusted environments and back.",
+      "kwds": "auth_s _pip pip pypa pypi",
+      "version": "2.1.2",
+      "release_count": 26,
+      "developers": [
+        "armin.ronacher@active-4.com",
+        "armin_ronacher",
+        "contact@palletsprojects.com",
+        "pallets"
+      ],
+      "_rid": "YuM7AMfcPP5VEAAAAAAAAA==",
+      "_self": "dbs/YuM7AA==/colls/YuM7AMfcPP4=/docs/YuM7AMfcPP5VEAAAAAAAAA==/",
+      "_etag": "\"4c01bb63-0000-0300-0000-6752fa520000\"",
+      "_attachments": "attachments/",
+      "_ts": 1733491282,
+      "__traversal_depth": 1
+    },
+    "jinja2": {
+      "doctype": "library",
+      "name": "jinja2",
+      "id": "jinja2",
+      "pk": "j",
+      "dependencies": [
+        {
+          "id": "babel",
+          "pk": "b",
+          "doctype": "library"
+        },
+        {
+          "id": "markupsafe",
+          "pk": "m",
+          "doctype": "library"
+        }
+      ],
+      "package_url": "https://pypi.org/project/Jinja2/",
+      "summary": "a very fast and expressive template engine.",
+      "kwds": "jinja jinja2 templates templating template",
+      "version": "3.1.2",
+      "release_count": 48,
+      "developers": [
+        "armin.ronacher@active-4.com",
+        "armin_ronacher",
+        "contact@palletsprojects.com",
+        "pallets"
+      ],
+      "_rid": "YuM7AMfcPP6eEAAAAAAAAA==",
+      "_self": "dbs/YuM7AA==/colls/YuM7AMfcPP4=/docs/YuM7AMfcPP6eEAAAAAAAAA==/",
+      "_etag": "\"4c011664-0000-0300-0000-6752fa530000\"",
+      "_attachments": "attachments/",
+      "_ts": 1733491283,
+      "__traversal_depth": 1
+    },
+    "werkzeug": {
+      "doctype": "library",
+      "name": "werkzeug",
+      "id": "werkzeug",
+      "pk": "w",
+      "dependencies": [
+        {
+          "id": "markupsafe",
+          "pk": "m",
+          "doctype": "library"
+        },
+        {
+          "id": "watchdog",
+          "pk": "w",
+          "doctype": "library"
+        }
+      ],
+      "package_url": "https://pypi.org/project/Werkzeug/",
+      "summary": "the comprehensive wsgi web application library.",
+      "kwds": "wsgi _wsgi werkzeug flask python",
+      "version": "3.0.1",
+      "release_count": 92,
+      "developers": [
+        "contact@palletsprojects.com"
+      ],
+      "_rid": "YuM7AMfcPP6cKAAAAAAAAA==",
+      "_self": "dbs/YuM7AA==/colls/YuM7AMfcPP4=/docs/YuM7AMfcPP6cKAAAAAAAAA==/",
+      "_etag": "\"4c011280-0000-0300-0000-6752facf0000\"",
+      "_attachments": "attachments/",
+      "_ts": 1733491407,
+      "__traversal_depth": 1
+    },
+    "babel": {
+      "doctype": "library",
+      "name": "babel",
+      "id": "babel",
+      "pk": "b",
+      "dependencies": [
+        {
+          "id": "freezegun",
+          "pk": "f",
+          "doctype": "library"
+        },
+        {
+          "id": "pytest",
+          "pk": "p",
+          "doctype": "library"
+        },
+        {
+          "id": "pytest_cov",
+          "pk": "p",
+          "doctype": "library"
+        },
+        {
+          "id": "pytz",
+          "pk": "p",
+          "doctype": "library"
+        }
+      ],
+      "package_url": "https://pypi.org/project/Babel/",
+      "summary": "internationalization utilities",
+      "kwds": "a collection of tools for internationalizing python applications. internationalization utilities",
+      "version": "2.14.0",
+      "release_count": 42,
+      "developers": [
+        "aarni_koskela",
+        "akx@iki.fi",
+        "armin.ronacher@active-4.com",
+        "armin_ronacher"
+      ],
+      "_rid": "YuM7AMfcPP5dBAAAAAAAAA==",
+      "_self": "dbs/YuM7AA==/colls/YuM7AMfcPP4=/docs/YuM7AMfcPP5dBAAAAAAAAA==/",
+      "_etag": "\"4c01c955-0000-0300-0000-6752fa140000\"",
+      "_attachments": "attachments/",
+      "_ts": 1733491220,
+      "__traversal_depth": 2
+    },
+    "colorama": {
+      "doctype": "library",
+      "name": "colorama",
+      "id": "colorama",
+      "pk": "c",
+      "dependencies": [],
+      "package_url": "https://pypi.org/project/colorama/",
+      "summary": "cross-platform colored terminal text.",
+      "kwds": "termcolor colors colorama xplatform colour",
+      "version": "0.4.6",
+      "release_count": 46,
+      "developers": [
+        "tartley@tartley.com"
+      ],
+      "_rid": "YuM7AMfcPP6rBgAAAAAAAA==",
+      "_self": "dbs/YuM7AA==/colls/YuM7AMfcPP4=/docs/YuM7AMfcPP6rBgAAAAAAAA==/",
+      "_etag": "\"4c014658-0000-0300-0000-6752fa200000\"",
+      "_attachments": "attachments/",
+      "_ts": 1733491232,
+      "__traversal_depth": 2
+    },
+    "markupsafe": {
+      "doctype": "library",
+      "name": "markupsafe",
+      "id": "markupsafe",
+      "pk": "m",
+      "dependencies": [],
+      "package_url": "https://pypi.org/project/MarkupSafe/",
+      "summary": "safely add untrusted strings to html/xml markup.",
+      "kwds": "markup markupsafe _pip html escaping",
+      "version": "2.1.3",
+      "release_count": 29,
+      "developers": [
+        "contact@palletsprojects.com",
+        "pallets"
+      ],
+      "_rid": "YuM7AMfcPP6-EgAAAAAAAA==",
+      "_self": "dbs/YuM7AA==/colls/YuM7AMfcPP4=/docs/YuM7AMfcPP6-EgAAAAAAAA==/",
+      "_etag": "\"4c019266-0000-0300-0000-6752fa5e0000\"",
+      "_attachments": "attachments/",
+      "_ts": 1733491294,
+      "__traversal_depth": 2
+    },
+    "mypy": {
+      "doctype": "library",
+      "name": "mypy",
+      "id": "mypy",
+      "pk": "m",
+      "dependencies": [
+        {
+          "id": "lxml",
+          "pk": "l",
+          "doctype": "library"
+        },
+        {
+          "id": "mypy_extensions",
+          "pk": "m",
+          "doctype": "library"
+        },
+        {
+          "id": "pip",
+          "pk": "p",
+          "doctype": "library"
+        },
+        {
+          "id": "psutil",
+          "pk": "p",
+          "doctype": "library"
+        },
+        {
+          "id": "setuptools",
+          "pk": "s",
+          "doctype": "library"
+        },
+        {
+          "id": "tomli",
+          "pk": "t",
+          "doctype": "library"
+        },
+        {
+          "id": "typing_extensions",
+          "pk": "t",
+          "doctype": "library"
+        }
+      ],
+      "package_url": "https://pypi.org/project/mypy/",
+      "summary": "optional static typing for python",
+      "kwds": "python mypy type types typing",
+      "version": "1.8.0",
+      "release_count": 113,
+      "developers": [
+        "jukka.lehtosalo@iki.fi",
+        "jukka_lehtosalo"
+      ],
+      "_rid": "YuM7AMfcPP69FQAAAAAAAA==",
+      "_self": "dbs/YuM7AA==/colls/YuM7AMfcPP4=/docs/YuM7AMfcPP69FQAAAAAAAA==/",
+      "_etag": "\"4c011f6a-0000-0300-0000-6752fa6e0000\"",
+      "_attachments": "attachments/",
+      "_ts": 1733491310,
+      "__traversal_depth": 2
+    },
+    "pytest": {
+      "doctype": "library",
+      "name": "pytest",
+      "id": "pytest",
+      "pk": "p",
+      "dependencies": [
+        {
+          "id": "argcomplete",
+          "pk": "a",
+          "doctype": "library"
+        },
+        {
+          "id": "attrs",
+          "pk": "a",
+          "doctype": "library"
+        },
+        {
+          "id": "colorama",
+          "pk": "c",
+          "doctype": "library"
+        },
+        {
+          "id": "exceptiongroup",
+          "pk": "e",
+          "doctype": "library"
+        },
+        {
+          "id": "hypothesis",
+          "pk": "h",
+          "doctype": "library"
+        },
+        {
+          "id": "importlib_metadata",
+          "pk": "i",
+          "doctype": "library"
+        },
+        {
+          "id": "iniconfig",
+          "pk": "i",
+          "doctype": "library"
+        },
+        {
+          "id": "mock",
+          "pk": "m",
+          "doctype": "library"
+        },
+        {
+          "id": "nose",
+          "pk": "n",
+          "doctype": "library"
+        },
+        {
+          "id": "packaging",
+          "pk": "p",
+          "doctype": "library"
+        },
+        {
+          "id": "pluggy",
+          "pk": "p",
+          "doctype": "library"
+        },
+        {
+          "id": "pygments",
+          "pk": "p",
+          "doctype": "library"
+        },
+        {
+          "id": "requests",
+          "pk": "r",
+          "doctype": "library"
+        },
+        {
+          "id": "setuptools",
+          "pk": "s",
+          "doctype": "library"
+        },
+        {
+          "id": "tomli",
+          "pk": "t",
+          "doctype": "library"
+        },
+        {
+          "id": "xmlschema",
+          "pk": "x",
+          "doctype": "library"
+        }
+      ],
+      "package_url": "https://pypi.org/project/pytest/",
+      "summary": "pytest: simple powerful testing with python",
+      "kwds": "pytest_logo_curves pytest _pytest pypy3 pypi",
+      "version": "7.4.3",
+      "release_count": 165,
+      "developers": [
+        "holger_krekel"
+      ],
+      "_rid": "YuM7AMfcPP4MHgAAAAAAAA==",
+      "_self": "dbs/YuM7AA==/colls/YuM7AMfcPP4=/docs/YuM7AMfcPP4MHgAAAAAAAA==/",
+      "_etag": "\"4c01e273-0000-0300-0000-6752fa990000\"",
+      "_attachments": "attachments/",
+      "_ts": 1733491353,
+      "__traversal_depth": 2
+    },
+    "watchdog": {
+      "doctype": "library",
+      "name": "watchdog",
+      "id": "watchdog",
+      "pk": "w",
+      "dependencies": [
+        {
+          "id": "pyyaml",
+          "pk": "p",
+          "doctype": "library"
+        }
+      ],
+      "package_url": "https://pypi.org/project/watchdog/",
+      "summary": "filesystem events monitoring",
+      "kwds": "loggingfilesystemeventhandler filemodifiedevent filesystemeventhandler watchdog_fsevents filesystemevent",
+      "version": "3.0.0",
+      "release_count": 46,
+      "developers": [
+        "yesudeep@gmail.com",
+        "yesudeep_mangalapilly"
+      ],
+      "_rid": "YuM7AMfcPP5wKAAAAAAAAA==",
+      "_self": "dbs/YuM7AA==/colls/YuM7AMfcPP4=/docs/YuM7AMfcPP5wKAAAAAAAAA==/",
+      "_etag": "\"4c01e27f-0000-0300-0000-6752facf0000\"",
+      "_attachments": "attachments/",
+      "_ts": 1733491407,
+      "__traversal_depth": 2
+    }
+  }
+}

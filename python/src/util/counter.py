@@ -1,4 +1,3 @@
-
 # This class implements a simple key and dictionary based
 # counter for ad-hoc purposes.
 # Chris Joakim, Microsoft
