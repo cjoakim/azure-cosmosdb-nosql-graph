@@ -338,8 +338,10 @@ async def traverse_dependencies(dbname, cname, libname, depth):
         nosql_svc.set_container(cname)
         dg = DependencyGraph(nosql_svc)
         results = await dg.traverse_dependencies(libname, depth)
-        print("traverse_dependencies results: {}".format(
-            json.dumps(results, indent=2)))
+        print("traverse_dependencies, seconds {}, docs: {}".format(
+            results["elapsed_time"], len(results["collected_libs"])))
+        outfile = "tmp/{}_{}.json".format(libname, depth)
+        FS.write_json(results, outfile)
     except Exception as e:
         logging.info(str(e))
         logging.info(traceback.format_exc())

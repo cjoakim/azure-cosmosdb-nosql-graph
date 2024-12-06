@@ -88,6 +88,9 @@ class CosmosNoSQLService:
         self._ctrproxy = self._dbproxy.get_container_client(cname)
         return self._ctrproxy  # <class 'azure.cosmos.aio._container.ContainerProxy'>
 
+    def current_ctrproxy(self):
+        return self._ctrproxy
+    
     async def list_containers(self):
         """Return the list of container names in the current database."""
         container_list = list()
