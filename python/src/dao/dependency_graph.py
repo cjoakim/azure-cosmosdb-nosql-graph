@@ -4,6 +4,9 @@
 # Chris Joakim, Microsoft
 
 import asyncio
+import time
+import logging
+import traceback
 
 from src.services.config_service import ConfigService
 from src.services.cosmos_nosql_service import CosmosNoSQLService
@@ -29,10 +32,23 @@ class DependencyGraph:
         Return a dictionary of the collected libraries, with a 
         depth value added to each returned library.
         """
-        self.root_library = root_library
-        self.depth = depth
-        self.collected_libs = dict()
+        collected_libs = dict()
+        result_object = dict()
+        result_object['root_library'] = root_library
+        result_object['depth'] = depth
+        result_object['start_time'] = time.time()
+        result_object['elapsed_time'] = -1   # will overlay below
+        result_object['collected_libs'] = collected_libs
 
-        await asyncio.sleep(0.1)
+        try:
+            root_library = root_library
+            depth = depth
 
-        return self.collected_libs
+            await asyncio.sleep(0.1)
+
+        except Exception as e:
+            logging.info(str(e))
+            logging.info(traceback.format_exc())
+        result_object['elapsed_time'] = time.time() - result_object['start_time']
+        return result_object
+
