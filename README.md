@@ -3,12 +3,12 @@
 A demonstration of how to use the **Cosmos DB NoSQL API for Graph Workoads**.
 
 The code implementation in this repo is in **Python**, but the concepts
-are langage-neutral.
+are language-neutral.
 
 ## Graph Workload Best Practices with the Cosmos DB NoSQL API
 
-- Minimize the number of Cosmos DB containers; it's not relational
-- Generally use a Single Container Design
+- Minimize the number of Cosmos DB containers; it's not a relational database
+- Generally use a Single Container Design for the graph
 - Store dissimilar documents in the same container
   - Differentiate these with a 'doctype' attribute or similar attribute
   - For example: 'order', 'line_item', 'delivery' for an eCommerce app
@@ -17,11 +17,12 @@ are langage-neutral.
   - Each stage of the pipeline uses the results of the previous stage
   - Implement your pipelines as separate Python/Java/C# classes
     - Instances of these classes execute the pipeline
-    - See class "PythonDependencyGraph" (file xxx) in this repo
+    - See example class "DependencyGraph" (file python/src/dao/dependency_graph.py)
   - This logic can use fast and efficient Cosmos DB point-reads
   - See https://www.mongodb.com/docs/manual/core/aggregation-pipeline/
 - Converting from a LPG "Vertices and Edges" model
   - "Fold" the outgoing edges into the source vertex as an array of edges
+  - Include the id and partition key "coordinates" of the associated vertex
 - Use materialized view documents to optimize common queries
   - This "materializes" complex query results into a cached document for reuse
 
