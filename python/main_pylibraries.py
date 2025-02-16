@@ -2,20 +2,20 @@
 This program is for CLI, or "console app" functionality related
 to this demonstration of the Cosmos DB NoSQL API.
 Usage:
-    python main.py print_defined_environment_variables
-    python main.py test_cosmos_service <dbname> <cname> <optional-flags>
-    python main.py test_cosmos_service graph test
-    python main.py test_cosmos_service graph test --bulk-load
-    python main.py load_python_libraries_graph <dbname> <cname> <max_docs>
-    python main.py load_python_libraries_graph graph graph 999999 --bulk-load
-    python main.py point_read <dbname> <cname> <doc_id> <pk>
-    python main.py point_read graph graph flask f
-    python main.py query <dbname> <cname> <query_name>
-    python main.py query graph graph count_documents
-    python main.py query graph graph docs_in_pk_2
-    python main.py traverse_dependencies <dbname> <cname> <libname> <depth>
-    python main.py traverse_dependencies graph graph flask 1
-    python main.py traverse_dependencies graph graph flask 3
+    python main_pylibraries.py print_defined_environment_variables
+    python main_pylibraries.py test_cosmos_service <dbname> <cname> <optional-flags>
+    python main_pylibraries.py test_cosmos_service graph test
+    python main_pylibraries.py test_cosmos_service graph test --bulk-load
+    python main_pylibraries.py load_python_libraries_graph <dbname> <cname> <max_docs>
+    python main_pylibraries.py load_python_libraries_graph graph graph 999999 --bulk-load
+    python main_pylibraries.py point_read <dbname> <cname> <doc_id> <pk>
+    python main_pylibraries.py point_read graph graph flask f
+    python main_pylibraries.py query <dbname> <cname> <query_name>
+    python main_pylibraries.py query graph graph count_documents
+    python main_pylibraries.py query graph graph docs_in_pk_2
+    python main_pylibraries.py traverse_dependencies <dbname> <cname> <libname> <depth>
+    python main_pylibraries.py traverse_dependencies graph graph flask 1
+    python main_pylibraries.py traverse_dependencies graph graph flask 3
 Options:
   -h --help     Show this screen.
   --version     Show version.
@@ -47,6 +47,8 @@ def print_options(msg):
     print(msg)
     arguments = docopt(__doc__, version="1.0.0")
     print(arguments)
+
+
 
 
 def print_defined_environment_variables():
@@ -165,7 +167,7 @@ async def load_python_libraries_graph(dbname, cname, max_docs):
         await nosql_svc.initialize()
         nosql_svc.set_db(dbname)
         nosql_svc.set_container(cname)
-        doc_dict = FS.read_json("../data/python_libs.json")
+        doc_dict = FS.read_json("../data/python_libs/python_libs.json")
         partition_key_values = collect_partition_key_values(doc_dict)
         print(
             "partition_keys: {} {}".format(
@@ -345,7 +347,7 @@ async def traverse_dependencies(dbname, cname, libname, depth):
         # libraries while the sample dataset only has ~10k libraries.
         # This can result in many non-found cases when traversing
         # the graph.
-        doc_dict = FS.read_json("../data/python_libs.json")
+        doc_dict = FS.read_json("../data/python_libs/python_libs.json")
         known_libs = doc_dict.keys()
         dg = DependencyGraph(nosql_svc, known_libs)
 

@@ -1,20 +1,18 @@
+import json
 import logging
 import traceback
 import uuid
 
 from azure.cosmos.aio import CosmosClient
-
 from azure.identity import ClientSecretCredential, DefaultAzureCredential
 
 from src.services.config_service import ConfigService
 
-# Instances of this class are used to access a Cosmos DB NoSQL
-# account/database using the asynchronous SDK methods.
 # Chris Joakim, Microsoft
 
 # azure_logger can be used to set the verbosity of the Azure and Cosmos SDK logging
 azure_logger = logging.getLogger("azure")
-azure_logger.setLevel(logging.FATAL)
+azure_logger.setLevel(logging.WARNING)
 
 
 LAST_REQUEST_CHARGE_HEADER = "x-ms-request-charge"
@@ -23,6 +21,8 @@ LAST_REQUEST_CHARGE_HEADER = "x-ms-request-charge"
 class CosmosNoSQLService:
 
     def __init__(self, opts={}):
+        # https://www.slingacademy.com/article/python-defining-a-class-with-an-async-constructor/
+        # https://stackoverflow.com/questions/33128325/how-to-set-class-attribute-with-await-in-init
         self._opts = opts
         self._dbname = None
         self._dbproxy = None
@@ -41,14 +41,14 @@ class CosmosNoSQLService:
             uri = ConfigService.cosmosdb_nosql_uri()
             key = ConfigService.cosmosdb_nosql_key()
             logging.error("CosmosNoSQLService#uri: {}".format(uri))
-            # logging.error("CosmosNoSQLService#key: {}".format(key))
-            self._client = CosmosClient(uri, key, logging_enable=True)
+            logging.error("CosmosNoSQLService#key: {}".format(key))
+            self._client = CosmosClient(uri, key)
             logging.info("CosmosNoSQLService - initialize() with key completed")
         else:
             logging.info("CosmosNoSQLService#initialize with DefaultAzureCredential")
             uri = ConfigService.cosmosdb_nosql_uri()
             credential = DefaultAzureCredential()
-            # credential info previously injected into the runtime environment
+            # credential ino is injected into the runtime environment
             self._client = CosmosClient(uri, credential=credential)
             logging.info(
                 "CosmosNoSQLService - initialize() with DefaultAzureCredential completed"
@@ -84,9 +84,6 @@ class CosmosNoSQLService:
         self._cname = cname
         self._ctrproxy = self._dbproxy.get_container_client(cname)
         return self._ctrproxy  # <class 'azure.cosmos.aio._container.ContainerProxy'>
-
-    def current_ctrproxy(self):
-        return self._ctrproxy
 
     async def list_containers(self):
         """Return the list of container names in the current database."""
