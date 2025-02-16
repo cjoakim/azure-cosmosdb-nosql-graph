@@ -10,15 +10,25 @@ The implementation code is in **main_devices.py**
 - **DeviceSingleton, (D1)**
   - Represents the unique devices as their identifiers evolve
   - did (deviceID) is a uuid
-  - attrs: id, label, firstConnection
+  - attrs: id, label, firstEventEpoch
   - partition key: did (deviceID)
   - dt (documentType): "D1"
+
+```
+
+```
+
 - **Device, (D)** 
   - did (deviceID) is a uuid
   - pid (producerID) is a string
   - attrs: did, pid, extId
   - partition key: did (deviceID)
   - dt (documentType): "D"
+
+```
+
+```
+
 - **DeviceState (DS)**
   - has current and history
   - since and until timestamps
@@ -27,6 +37,31 @@ The implementation code is in **main_devices.py**
   - typical size 500b to 2kb
   - partition key: did (deviceID)
   - dt (documentType): "DS"
+
+```
+  {
+      "did": "8cf5c21f-8a7d-4aa8-8d5b-5a9be896b3cd",
+      "pid": "hunt, combs and mcmahon",
+      "extId": "426dd850-32f1-4a6e-88ff-3c100898b457",
+      "ser": "90310",
+      "cid": "712681",
+      "host": "db-92",
+      "mac": "ae591184-87ae-4431-b551-e1923d1fdaca",
+      "build": 677173,
+      "dt": "ds",
+      "id": "3e113135-3777-427f-87ff-98bc466e88cb",
+      "epoch": 1739733895.2150435,
+      "_rid": "8+kcAMsoK1NOAAAAAAAAAA==",
+      "_self": "dbs/8+kcAA==/colls/8+kcAMsoK1M=/docs/8+kcAMsoK1NOAAAAAAAAAA==/",
+      "_etag": "\"95000fe5-0000-0100-0000-67b23b880000\"",
+      "_attachments": "attachments/",
+      "_ts": 1739733896
+  }
+
+doc size: 546
+upsert request_charge: 9.33
+```
+
 - **DeviceAttributes (DA)**
   - These are in two types, strong or weak, and have a value
     - Strong: deviceID, serialNum, computerID, hostname 
@@ -34,6 +69,10 @@ The implementation code is in **main_devices.py**
   - attrs: name, value, deviceID
   - partition key: "DA"
   - dt (documentType): "DA"
+
+```
+
+```
 
 ## Application Flow
 

@@ -35,5 +35,5 @@ A **Node.js/TypeScript** implementation may be added at a later date.
 ## Example Graphs
 
 - [Python Libraries](README_PYLIBRARIES.md)
-  - This uses the [CosmosAIGraph dataset](aka.ms/caig)
+  - This uses the [CosmosAIGraph dataset](https://github.com/AzureCosmosDB/CosmosAIGraph)
 - [IoT Devices](README_DEVICES.md)

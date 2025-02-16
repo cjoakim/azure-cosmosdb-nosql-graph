@@ -6,6 +6,7 @@ Usage:
     python main_devices.py simulate_device_state_stream <event-count> <flag-args>
     python main_devices.py simulate_device_state_stream 100 
     python main_devices.py simulate_device_state_stream 100 --simulate-az-function
+    python main_devices.py test_initialize_data 
 Options:
   -h --help     Show this screen.
   --version     Show version.
@@ -46,6 +47,12 @@ def print_options(msg):
 def print_defined_environment_variables():
     ConfigService.print_defined_env_vars()
 
+def test_initialize_data():
+    DeviceData.initialize()
+    for i in range(3):
+        ds = DeviceData.random_device_state()
+        size = len(json.dumps(ds))
+        print("device state: {} size:{}".format(ds, size))
 
 async def simulate_device_state_stream(event_count: int, simulate_azure_function: bool):
     """
@@ -56,6 +63,7 @@ async def simulate_device_state_stream(event_count: int, simulate_azure_function
     logging.info("simulate_device_state_stream, d_container:  {}".format(d_container))
     logging.info("simulate_device_state_stream, ds_container: {}".format(ds_container))
     logging.info("simulate_device_state_stream, da_container: {}".format(da_container))
+    DeviceData.initialize()
 
     try:
         # First initialize the CosmosNoSQLService connection -
@@ -80,8 +88,8 @@ async def simulate_device_state_stream(event_count: int, simulate_azure_function
         for i in range(event_count):
             seq = i + 1
             print('----------')
-            obj = DeviceData.create_device_state_doc()
-            print("streaming event: {}/{} id: {} did: {}".format(
+            obj = DeviceData.random_device_state()
+            print("streaming device_state event: {}/{} id: {} did: {}".format(
                 seq, event_count, obj['id'], obj['did']))
         
             ds_doc = await nosql_svc.upsert_item(obj)
@@ -132,11 +140,12 @@ if __name__ == "__main__":
         print_options("")
         exit(1)
     else:
-        DeviceData.initialize()
         try:
             func = sys.argv[1].lower()
             if func == "print_defined_environment_variables":
                 print_defined_environment_variables()
+            elif func == "test_initialize_data":
+                test_initialize_data()
             elif func == "simulate_device_state_stream":
                 event_count = int(sys.argv[2])
                 simulate_azure_function = ConfigService.boolean_arg("--simulate-az-function")
