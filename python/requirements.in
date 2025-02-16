@@ -11,3 +11,6 @@ azure-identity
 black
 docopt
 python-dotenv
+pytest-asyncio
+pytest-cov
+pytest

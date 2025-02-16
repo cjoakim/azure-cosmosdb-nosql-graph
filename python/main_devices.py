@@ -27,7 +27,9 @@ from src.dao.dependency_graph import DependencyGraph
 from src.services.config_service import ConfigService
 from src.services.cosmos_nosql_service import CosmosNoSQLService
 from src.util.counter import Counter
-from src.util.device_data import DeviceData
+from src.models.device_data import DeviceData
+from src.models.device_data import DeviceState
+from src.models.device_state_changes import DeviceStateChanges
 from src.util.fs import FS
 
 # get the Cosmos DB database and container names from environment variables, with defaults
@@ -118,19 +120,37 @@ async def process_streamed_device_state_event(nosql_svc, ds_doc, dbproxy, ctrpro
     """
     logging.info("process_streamed_device_state_event, ds_doc: {}".format(ds_doc))
 
-    print('---')
-    doc = await nosql_svc.point_read(ds_doc["id"], ds_doc["did"])
-    print("point_read doc: {}".format(doc))
-    print("point_read doc size: {}".format(len(json.dumps(doc))))
-    print("point_read last_request_charge: {}".format(nosql_svc.last_request_charge()))
+    # First, get the current Device State and see if it has changed.
+    curr_doc = None
+    device_state_changes: DeviceStateChanges = DeviceStateChanges(curr_doc, ds_doc)
+    if device_state_changes.has_changes():
+        pass
+        # save the state_change_doc
+        # update the curr_doc, if any
+
+        # 
+    else:
+        return
+
+
+
+
+    # print('---')
+    # doc = await nosql_svc.point_read(ds_doc["id"], ds_doc["did"])
+    # print("point_read doc: {}".format(doc))
+    # print("point_read doc size: {}".format(len(json.dumps(doc))))
+    # print("point_read last_request_charge: {}".format(nosql_svc.last_request_charge()))
     
-    print('---')
-    doc["phone"] = "867-5309"
-    updated = await nosql_svc.upsert_item(doc)
-    print("updated doc: {}".format(updated))
-    print("updated doc size: {}".format(len(json.dumps(doc))))
-    print("updated last_request_charge: {}".format(nosql_svc.last_request_charge()))
-    print('---')
+    # print('---')
+    # doc["phone"] = "867-5309"
+    # updated = await nosql_svc.upsert_item(doc)
+    # print("updated doc: {}".format(updated))
+    # print("updated doc size: {}".format(len(json.dumps(doc))))
+    # print("updated last_request_charge: {}".format(nosql_svc.last_request_charge()))
+    # print('---')
+
+def delete_tmp_files():
+    FS.delete_dir("tmp")
 
 
 if __name__ == "__main__":
@@ -145,8 +165,10 @@ if __name__ == "__main__":
             if func == "print_defined_environment_variables":
                 print_defined_environment_variables()
             elif func == "test_initialize_data":
+                FS.delete_files_in_dir("tmp")
                 test_initialize_data()
             elif func == "simulate_device_state_stream":
+                FS.delete_files_in_dir("tmp")
                 event_count = int(sys.argv[2])
                 simulate_azure_function = ConfigService.boolean_arg("--simulate-az-function")
                 asyncio.run(simulate_device_state_stream(event_count, simulate_azure_function))

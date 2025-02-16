@@ -12,7 +12,12 @@ fake = Faker()
 
 # Chris Joakim, Microsoft
 
+
+
 class DeviceData:
+
+    strong_attrs = 'ser,cid,host'.split(',')
+    weak_attrs = 'ip,mac,build'.split(',')
 
     @classmethod
     def random_device_state(cls) -> dict:
@@ -47,6 +52,10 @@ class DeviceData:
         return ds
 
     @classmethod
+    def simulated_etag(cls):
+        return str(fake.hexify(text='^^^^^^^^^^^^'))
+
+    @classmethod
     def initialize(cls) -> None:
         # Strong: deviceID, serialNum, computerID, hostname 
         # Weak: osName, ipAddress, macAddress, phoneNum, emailAddr, appUser, buildId
@@ -57,7 +66,7 @@ class DeviceData:
             value = str(uuid.uuid4())
             values[value] = 0
         DeviceData.deviceIDs = sorted(values.keys())
-        logging.info("DeviceData#initialize - {} deviceIDs".format(len(DeviceData.deviceIDs)))
+        #logging.info("DeviceData#initialize - {} deviceIDs".format(len(DeviceData.deviceIDs)))
         FS.write_json(DeviceData.deviceIDs, "tmp/deviceIDs.json")
 
         # serialNumbers
@@ -66,7 +75,7 @@ class DeviceData:
             value = str(i + 1)
             values[value] = 0
         DeviceData.serialNumbers = sorted(values.keys())
-        logging.info("DeviceData#initialize - {} serialNumbers".format(len(DeviceData.serialNumbers)))
+        #logging.info("DeviceData#initialize - {} serialNumbers".format(len(DeviceData.serialNumbers)))
         FS.write_json(DeviceData.serialNumbers, "tmp/serialNumbers.json")
 
         # computerIDs
@@ -75,7 +84,7 @@ class DeviceData:
             value = str(random.randint(0, 1_000_000))
             values[value] = 0
         DeviceData.computerIDs = sorted(values.keys())
-        logging.info("DeviceData#initialize - {} computerIDs".format(len(DeviceData.computerIDs)))
+        #logging.info("DeviceData#initialize - {} computerIDs".format(len(DeviceData.computerIDs)))
         FS.write_json(DeviceData.computerIDs, "tmp/computerIDs.json")
 
         # hostNames
@@ -84,7 +93,7 @@ class DeviceData:
             value = fake.hostname(0)
             values[value] = 0
         DeviceData.hostNames = sorted(values.keys())
-        logging.info("DeviceData#initialize - {} hostNames".format(len(DeviceData.hostNames)))
+        #logging.info("DeviceData#initialize - {} hostNames".format(len(DeviceData.hostNames)))
         FS.write_json(DeviceData.hostNames, "tmp/hostNames.json")
 
         # producerIDs
@@ -93,7 +102,7 @@ class DeviceData:
             value = str(fake.company()).lower()
             values[value] = 0
         DeviceData.producerIDs = sorted(values.keys())
-        logging.info("DeviceData#initialize - {} producerIDs".format(len(DeviceData.producerIDs)))
+        #logging.info("DeviceData#initialize - {} producerIDs".format(len(DeviceData.producerIDs)))
         FS.write_json(DeviceData.producerIDs, "tmp/producerIDs.json")
 
         # ipAddresses
@@ -106,7 +115,7 @@ class DeviceData:
             ip = "{}.{}.{}.{}".format(part1, part2, part3, part4)
             values[ip] = 0
         DeviceData.ipAddresses = sorted(values.keys())
-        logging.info("DeviceData#initialize - {} ipAddresses".format(len(DeviceData.ipAddresses)))
+        #logging.info("DeviceData#initialize - {} ipAddresses".format(len(DeviceData.ipAddresses)))
         FS.write_json(DeviceData.ipAddresses, "tmp/ipAddresses.json")
 
         # macAddresses
@@ -116,7 +125,7 @@ class DeviceData:
             value = str(fake.hexify(text='^^:^^:^^:^^:^^:^^'))
             values[value] = 0
         DeviceData.macAddresses = sorted(values.keys())
-        logging.info("DeviceData#initialize - {} macAddresses".format(len(DeviceData.macAddresses)))
+        #logging.info("DeviceData#initialize - {} macAddresses".format(len(DeviceData.macAddresses)))
         FS.write_json(DeviceData.macAddresses, "tmp/macAddresses.json")
 
         # create the in-memory deviceStates

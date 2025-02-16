@@ -3,6 +3,7 @@ import json
 import logging
 import os
 
+from pathlib import Path
 from typing import Iterator
 
 # This class is used to interact with the local filesystem, such as
@@ -211,6 +212,17 @@ class FS:
                     files.append(entry)
             return files
         return None
+
+    @classmethod
+    def delete_files_in_dir(cls, path: str) -> None:
+        directory = Path(path)
+        for item in directory.iterdir():
+            try:
+                if item.is_file() or item.is_symlink():
+                    item.unlink()
+                    print(f"Deleted file: {item}")
+            except Exception as e:
+                pass
 
     @classmethod
     def read_csvfile_into_rows(cls, infile: str, delim=",") -> list | None:
