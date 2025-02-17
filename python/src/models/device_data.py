@@ -62,7 +62,8 @@ class DeviceData:
         # deviceIDs
         values = dict()
         for i in range(100_000):
-            value = str(uuid.uuid4())
+            #value = str(uuid.uuid4())
+            value = str(fake.hexify(text='^^^^^^^^^^^^'))
             values[value] = 0
         DeviceData.deviceIDs = sorted(values.keys())
         FS.write_json(DeviceData.deviceIDs, "tmp/deviceIDs.json")
