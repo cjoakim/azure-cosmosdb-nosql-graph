@@ -12,6 +12,7 @@ def test_new_device_state():
     ds_doc = DeviceData.random_device_state()
     dsc = DeviceStateChanges(curr_doc, ds_doc)
     assert dsc.has_changes() == True
+    assert dsc.is_new() == True
     assert dsc.changes == 'new'
     assert dsc.updated_doc != None
     assert sorted(dsc.attrs_added) == sorted(ds_doc.keys())
@@ -30,6 +31,7 @@ def test_no_changes():
     ds_doc = dict(curr_doc)
     dsc = DeviceStateChanges(curr_doc, ds_doc)
     assert dsc.has_changes() == False
+    assert dsc.is_new() == False
     assert dsc.changes == 'none'
     assert dsc.updated_doc == None
     assert len(dsc.attrs_added) == 0
@@ -44,6 +46,7 @@ def test_attr_change():
     dsc = DeviceStateChanges(curr_doc, ds_doc)
     print(dsc.updated_doc)
     assert dsc.has_changes() == True
+    assert dsc.is_new() == False
     assert dsc.changes == 'attr'
     assert dsc.updated_doc != None
     assert len(curr_doc.keys()) == len(dsc.updated_doc.keys())
@@ -62,6 +65,7 @@ def test_attr_added():
     dsc = DeviceStateChanges(curr_doc, ds_doc)
     print(dsc.updated_doc)
     assert dsc.has_changes() == True
+    assert dsc.is_new() == False
     assert dsc.changes == 'attr'
     assert dsc.updated_doc != None
     expected_attr_count = len(curr_doc.keys()) + 1
@@ -81,6 +85,7 @@ def test_attr_removed():
     dsc = DeviceStateChanges(curr_doc, ds_doc)
     print(dsc.updated_doc)
     assert dsc.has_changes() == True
+    assert dsc.is_new() == False
     assert dsc.changes == 'attr'
     assert dsc.updated_doc != None
     expected_attr_count = len(curr_doc.keys()) - 1

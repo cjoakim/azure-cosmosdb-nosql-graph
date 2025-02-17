@@ -23,10 +23,9 @@ from docopt import docopt
 from dotenv import load_dotenv
 
 
-from src.dao.dependency_graph import DependencyGraph
+
 from src.services.config_service import ConfigService
 from src.services.cosmos_nosql_service import CosmosNoSQLService
-from src.util.counter import Counter
 from src.models.device_data import DeviceData
 from src.models.device_data import DeviceState
 from src.models.device_state_changes import DeviceStateChanges
@@ -122,13 +121,14 @@ async def process_streamed_device_state_event(nosql_svc, ds_doc, dbproxy, ctrpro
 
     # First, get the current Device State and see if it has changed.
     curr_doc = None
-    device_state_changes: DeviceStateChanges = DeviceStateChanges(curr_doc, ds_doc)
-    if device_state_changes.has_changes():
-        pass
-        # save the state_change_doc
-        # update the curr_doc, if any
-
-        # 
+    dsc: DeviceStateChanges = DeviceStateChanges(curr_doc, ds_doc)
+    if dsc.has_changes():
+        if dsc.is_new():
+            # Create the Device and DeviceSingleton documents
+            # Add the DeviceAttributes documents
+            print("new device state")
+        else:
+            print("changed device state")
     else:
         return
 

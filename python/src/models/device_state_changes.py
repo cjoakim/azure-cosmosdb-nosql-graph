@@ -36,6 +36,9 @@ class DeviceStateChanges:
     def has_changes(self):
         return self.changes != 'none'
     
+    def is_new(self):
+        return self.changes == 'new'
+    
     def compare_docs(self, curr_doc, ds_doc):
         merged_keys = self.merge_keys(self.curr_doc, self.ds_doc)
         for key in merged_keys:
