@@ -18,17 +18,16 @@ import sys
 import time
 import logging
 import traceback
+import uuid
 
 from docopt import docopt
 from dotenv import load_dotenv
 
-
-
 from src.services.config_service import ConfigService
 from src.services.cosmos_nosql_service import CosmosNoSQLService
 from src.models.device_data import DeviceData
-from src.models.device_data import DeviceState
 from src.models.device_state_changes import DeviceStateChanges
+from src.models.device_state_change_operations import DeviceStateChangeOperations
 from src.util.fs import FS
 
 # get the Cosmos DB database and container names from environment variables, with defaults
@@ -86,68 +85,52 @@ async def simulate_device_state_stream(event_count: int, simulate_azure_function
         ctrproxy = nosql_svc.set_container(ds_container)
         print("ctrproxy: {}".format(ctrproxy))
 
+        # create the events_list that will be iterated several times
+        # with slight modifications to the device states
+        events_list = list()
         for i in range(event_count):
-            seq = i + 1
-            print('----------')
-            obj = DeviceData.random_device_state()
-            print("streaming device_state event: {}/{} id: {} did: {}".format(
-                seq, event_count, obj['id'], obj['did']))
-        
-            ds_doc = await nosql_svc.upsert_item(obj)
-            print("ds_doc doc: {}".format(ds_doc))
-            print("ds_doc doc size: {}".format(len(json.dumps(ds_doc))))
-            print("ds_doc last_request_charge: {}".format(nosql_svc.last_request_charge()))
-            if True:
-                outfile = "tmp/device_doc_{}_{}.json".format(seq, obj['id'])
-                FS.write_json(ds_doc, outfile)
-            time.sleep(0.1)
-            if simulate_azure_function:
-                await process_streamed_device_state_event(nosql_svc, ds_doc, dbproxy, ctrproxy)
+            events_list.append(DeviceData.random_device_state())
 
-        print("end of simulate_device_state_stream")
+        for i in range(3):
+            await stream_device_state_events(i, events_list, nosql_svc)
+            await asyncio.sleep(5)
+
+        FS.write_json(
+            DeviceStateChangeOperations.all_operations,
+            "tmp/device_state_change_operations.json")
     except Exception as e:
         logging.info(str(e))
         logging.info(traceback.format_exc())
     await nosql_svc.close()
     logging.info("end of simulate_device_state_stream")
 
-async def process_streamed_device_state_event(nosql_svc, ds_doc, dbproxy, ctrproxy):
-    """
-    This implements logic that could be implemented in a ChangeFeed Azure Function
-    so as to decouple the DeviceState ingestion stream from the downstream
-    processing logic.
-    """
-    logging.info("process_streamed_device_state_event, ds_doc: {}".format(ds_doc))
 
-    # First, get the current Device State and see if it has changed.
-    curr_doc = None
-    dsc: DeviceStateChanges = DeviceStateChanges(curr_doc, ds_doc)
-    if dsc.has_changes():
-        if dsc.is_new():
-            # Create the Device and DeviceSingleton documents
-            # Add the DeviceAttributes documents
-            print("new device state")
-        else:
-            print("changed device state")
-    else:
-        return
+async def stream_device_state_events(iteration: int, events_list: list, nosql_svc: CosmosNoSQLService):
+    for obj in events_list:
+        print('----------')
+        obj['id'] = str(uuid.uuid4())
+        obj['evt_time'] = int(time.time())
+        print("iter: {} streaming device_state event: did: {} id: {}".format(
+            iteration, event_count, obj['did'], obj['id']))
+        
+        if iteration > 0:
+            make_random_changes(obj)
 
+        ds_doc = await nosql_svc.upsert_item(obj)
+        insert_ru = nosql_svc.last_request_charge()
+        print("ds_doc doc: {}".format(ds_doc))
+        print("ds_doc doc size: {}".format(len(json.dumps(ds_doc))))
+        print("ds_doc insert request_charge: {}".format(insert_ru))
+        time.sleep(0.1)
 
+        if True:
+            ops: DeviceStateChangeOperations = DeviceStateChangeOperations(nosql_svc, ds_doc)
+            ops.add_operation("DeviceState insert", insert_ru)
+            await ops.execute()
 
-
-    # print('---')
-    # doc = await nosql_svc.point_read(ds_doc["id"], ds_doc["did"])
-    # print("point_read doc: {}".format(doc))
-    # print("point_read doc size: {}".format(len(json.dumps(doc))))
-    # print("point_read last_request_charge: {}".format(nosql_svc.last_request_charge()))
-    
-    # print('---')
-    # doc["phone"] = "867-5309"
-    # updated = await nosql_svc.upsert_item(doc)
-    # print("updated doc: {}".format(updated))
-    # print("updated doc size: {}".format(len(json.dumps(doc))))
-    # print("updated last_request_charge: {}".format(nosql_svc.last_request_charge()))
-    # print('---')
+def make_random_changes(obj):
+    # TODO - implement
+    pass
 
 def delete_tmp_files():
     FS.delete_dir("tmp")

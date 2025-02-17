@@ -10,9 +10,8 @@ from src.util.fs import FS
 
 fake = Faker()
 
+# This class is used to generate random simulated DeviceState events.
 # Chris Joakim, Microsoft
-
-
 
 class DeviceData:
 
@@ -26,7 +25,7 @@ class DeviceData:
         print("DeviceData#random_device_state, idx/key: {}".format(idx,key))
         ds = DeviceData.deviceStates[key]
         ds['id'] = str(uuid.uuid4())
-        ds['epoch'] = time.time()
+        ds['evt_time'] = int(time.time())
 
         # randomly simulate changes to the DeviceState
         change = random.randint(0, 100)
@@ -66,7 +65,6 @@ class DeviceData:
             value = str(uuid.uuid4())
             values[value] = 0
         DeviceData.deviceIDs = sorted(values.keys())
-        #logging.info("DeviceData#initialize - {} deviceIDs".format(len(DeviceData.deviceIDs)))
         FS.write_json(DeviceData.deviceIDs, "tmp/deviceIDs.json")
 
         # serialNumbers
@@ -75,7 +73,6 @@ class DeviceData:
             value = str(i + 1)
             values[value] = 0
         DeviceData.serialNumbers = sorted(values.keys())
-        #logging.info("DeviceData#initialize - {} serialNumbers".format(len(DeviceData.serialNumbers)))
         FS.write_json(DeviceData.serialNumbers, "tmp/serialNumbers.json")
 
         # computerIDs
@@ -84,7 +81,6 @@ class DeviceData:
             value = str(random.randint(0, 1_000_000))
             values[value] = 0
         DeviceData.computerIDs = sorted(values.keys())
-        #logging.info("DeviceData#initialize - {} computerIDs".format(len(DeviceData.computerIDs)))
         FS.write_json(DeviceData.computerIDs, "tmp/computerIDs.json")
 
         # hostNames
@@ -93,7 +89,6 @@ class DeviceData:
             value = fake.hostname(0)
             values[value] = 0
         DeviceData.hostNames = sorted(values.keys())
-        #logging.info("DeviceData#initialize - {} hostNames".format(len(DeviceData.hostNames)))
         FS.write_json(DeviceData.hostNames, "tmp/hostNames.json")
 
         # producerIDs
@@ -102,7 +97,6 @@ class DeviceData:
             value = str(fake.company()).lower()
             values[value] = 0
         DeviceData.producerIDs = sorted(values.keys())
-        #logging.info("DeviceData#initialize - {} producerIDs".format(len(DeviceData.producerIDs)))
         FS.write_json(DeviceData.producerIDs, "tmp/producerIDs.json")
 
         # ipAddresses
@@ -115,7 +109,6 @@ class DeviceData:
             ip = "{}.{}.{}.{}".format(part1, part2, part3, part4)
             values[ip] = 0
         DeviceData.ipAddresses = sorted(values.keys())
-        #logging.info("DeviceData#initialize - {} ipAddresses".format(len(DeviceData.ipAddresses)))
         FS.write_json(DeviceData.ipAddresses, "tmp/ipAddresses.json")
 
         # macAddresses
@@ -125,7 +118,6 @@ class DeviceData:
             value = str(fake.hexify(text='^^:^^:^^:^^:^^:^^'))
             values[value] = 0
         DeviceData.macAddresses = sorted(values.keys())
-        #logging.info("DeviceData#initialize - {} macAddresses".format(len(DeviceData.macAddresses)))
         FS.write_json(DeviceData.macAddresses, "tmp/macAddresses.json")
 
         # create the in-memory deviceStates
@@ -133,18 +125,13 @@ class DeviceData:
         # as well as randomly change various attribute values
         DeviceData.deviceStates = dict()
         for did in DeviceData.deviceIDs:
-
-            # base attrs: did, pid, extId
-            # other attrs: os, build, mac, ip (these include identifiers)
-            # Strong: deviceID, serialNum, computerID, hostname 
-            # Weak: osName, ipAddress, macAddress, buildId
-
             producerID = cls.random_producer_id()
             ser = cls.random_serial_number()
             cid = cls.random_computer_id()
             host = cls.random_hostname()
             mac = cls.random_mac_address()
             build = random.randint(1000, 1_000_000)
+            evt_time = int(time.time()) - 5  # 5-seconds from device emitting to current time
             doc = {
                 "did": did,
                 "pid": producerID,
@@ -154,11 +141,12 @@ class DeviceData:
                 "host": host,
                 "mac": mac,
                 "build": build,
+                "evt_time": evt_time,
+                "until": -1,
                 "dt": "ds"
             }
             DeviceData.deviceStates[did] = doc
         DeviceData.deviceStatesKeys = sorted(DeviceData.deviceStates.keys())
-
 
     # private/random methods below
 

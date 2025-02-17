@@ -1,6 +1,3 @@
-import time
-
-from src.models.device_data import DeviceData
 
 # Instances of this class are used to detect and identify changes,
 # if any, between one DeviceState object and other.
