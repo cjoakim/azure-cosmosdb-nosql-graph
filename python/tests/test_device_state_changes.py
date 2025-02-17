@@ -12,7 +12,7 @@ def test_new_device_state():
     ds_doc = DeviceData.random_device_state()
     dsc = DeviceStateChanges(curr_doc, ds_doc)
     assert dsc.has_changes() == True
-    assert dsc.changes == 'new_doc'
+    assert dsc.changes == 'new'
     assert dsc.updated_doc != None
     assert sorted(dsc.attrs_added) == sorted(ds_doc.keys())
     assert len(dsc.attrs_added) == len(ds_doc.keys())

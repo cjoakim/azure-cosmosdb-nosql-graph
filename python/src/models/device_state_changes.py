@@ -23,7 +23,7 @@ class DeviceStateChanges:
             return  # bad input, the streamed ds_doc is expected to be non-null
     
         if (self.curr_doc is None) or (len(self.curr_doc.keys()) == 0):
-            self.changes = 'new_doc'
+            self.changes = 'new'
             self.updated_doc = self.ds_doc
             for attr in ds_doc.keys():
                 self.attrs_added.append(attr)
