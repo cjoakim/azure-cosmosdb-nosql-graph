@@ -3,7 +3,7 @@
 In this example the dataset is streaming in nature and created dynamically,
 and the related nodes of the graph are also created/updated dynamically.
 
-The implementation code is in **main_devices.py**
+The implementation code is in **main_devices.py** (this is a work-in-progress)
 
 ## Ingestion Flow
 
@@ -143,7 +143,7 @@ DeviceState events are unique, therefore the uuid ID values
 ### Indexes
 
 - Composite Index on DocType and PK
-- Composite Index on did, etime, and utime.  To find the previously latest DeviceState event
+- Composite Index on pk, dt, and utime.  To find the previously latest DeviceState event
 
 #### Alternative Design
 
@@ -154,6 +154,13 @@ Container per document type
 ## Questions
 
 - How unique are deviceIDs?  Possible "value space collisions".
+
 - Should DeviceAttributes be associated to a specific Device or ProducerDevice or DeviceSingleton?
   - Or should each DeviceAttribute just have a name and value?
-- What are the other queries, other than in the above ingestion flow?
+
+- Query to find the latest state for a given deviceID, ddd:
+```
+  select * from c where c.pk = 'ddd' and c.dt = 'DS' and c.utime < 0
+```
+
+- What are the other queries or traversals are required?
