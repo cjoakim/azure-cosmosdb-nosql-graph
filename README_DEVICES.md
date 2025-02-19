@@ -145,7 +145,7 @@ The _id, _etag, and _ts attributes are computed and set by Cosmos DB.
 
 ### Cosmos DB Containers
 
-In "design 1" has these five containers.
+Initial design has these five containers.
 
 | Name               | Partition Key | Abbreviation | PK Format   | Id Format   | Document Size |
 | ------------------ | ------------- | ------------ | ----------- | ----------- | ------------- |
