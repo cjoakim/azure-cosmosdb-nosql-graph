@@ -113,6 +113,7 @@ Thus there is a hierarchical structure from **DeviceSingleton --> ProducerDevice
   - did instead of deviceID
   - pid instead of producerID
   - ser instead of serialNum
+  - cid instead of computerID
   - pk instead of partitionKey
   - dt instead of documentType
   - etime = the epoch time of the DeviceState event
